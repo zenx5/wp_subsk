@@ -155,11 +155,18 @@ class WP_Subsk extends PluginK
                 }
             ],
             [
-                'title' => 'Contenido Permitido',
+                'title' => 'Post Type Permitido',
                 'render_callback' => function () {
                     include 'metas/contenido.php';
                 }
+            ],
+            [
+                'title' => 'Accesos Especiales',
+                'render_callback' => function () {
+                    include 'metas/accesos.php';
+                }
             ]
+
         ]);
     }
 }
