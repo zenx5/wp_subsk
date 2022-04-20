@@ -26,12 +26,10 @@ class PluginK
         }
     }
 
-    // public static function create_meta($metas)
-    // {
-    //     //add_meta_box('id', 'title', )
-    //     // foreach($metas as $key => $value){
-    //     //     add_meta_box($key,);
-    //     // }
-
-    // }
+    public static function create_meta($metas)
+    {
+        foreach ($metas as $meta) {
+            add_meta_box('id_' . $meta['title'], $meta['title'], $meta['render_callback'], 'subs_types', 'normal', 'high');
+        }
+    }
 }
