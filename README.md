@@ -10,17 +10,37 @@
 - Hooks propios del plugin
   - Esto permitirá extender las funcionalidades del mismo
 - Desarrollo de funciones con filtros antes del return para poder formatear las salidas antes de ser devueltas
+- Cada subs_types posee una serie de metas para configurar la suscripcion
 
-## Hooks
+## Metas
+
+### Precio:
+
+    En este metabox se controla el precio y moneda en la que se cobra la suscripcion
+
+### Periodo:
+
+    En este metabox se controla el periodo que dura la suscripcion  antes del siguiente cobro, este periodo viene por defecto en diaz pero puede presentarse en otros formatos.
+
+### Post Type permitidos:
+
+    En este metabox se decide a que tipos de contenidos son accesibles, puede ser de manera generica o una entrada en particular
+
+### Accesos Especiales:
+
+    En este metabox se decide a que tipos de funcionalidades de wordpress se tendra acceso con este tipo de suscripcion
+
+## Hooks:
 
 - wp_subsk_content_before
+
 - wp_subsk_content_after
 - wp_subsk_cost_before
 - wp_subsk_cost_after
 - wp_subsk_period_before
 - wp_subsk_period_after
 
-## Filters
+## Filters:
 
 - wp_subsk_currency
 - wp_subsk_period
