@@ -35,7 +35,8 @@
     se tendra acceso con este tipo de suscripcion
 
 ## Hooks:
-
+    Los hooks "before" permiten agregar contenido antes de que se muestre el correspondiente contenido, 
+    de la misma manera los hooks "after" lo hacen despues
 - wp_subsk_content_before
 - wp_subsk_content_after
 - wp_subsk_cost_before
@@ -44,7 +45,6 @@
 - wp_subsk_period_after
 
 ## Filters:
-
 - wp_subsk_currency
 - wp_subsk_period
 - wp_subsk_period_min
