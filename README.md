@@ -1,6 +1,7 @@
 # wp_subsk
 
-    Plugin para administración de suscripciones, control de accesos a contenidos y a caracteristicas de wordpress
+    Plugin para administración de suscripciones, control de accesos a contenidos
+    y a caracteristicas de wordpress
 
 ## Caracteristicas
 
@@ -20,20 +21,22 @@
 
 ### Periodo:
 
-    En este metabox se controla el periodo que dura la suscripcion  antes del siguiente cobro, este periodo viene por defecto en diaz pero puede presentarse en otros formatos.
+    En este metabox se controla el periodo que dura la suscripcion  antes del siguiente cobro,
+    este periodo viene por defecto en diaz pero puede presentarse en otros formatos.
 
 ### Post Type permitidos:
 
-    En este metabox se decide a que tipos de contenidos son accesibles, puede ser de manera generica o una entrada en particular
+    En este metabox se decide a que tipos de contenidos son accesibles, puede ser de manera generica 
+    o una entrada en particular
 
 ### Accesos Especiales:
 
-    En este metabox se decide a que tipos de funcionalidades de wordpress se tendra acceso con este tipo de suscripcion
+    En este metabox se decide a que tipos de funcionalidades de wordpress
+    se tendra acceso con este tipo de suscripcion
 
 ## Hooks:
 
 - wp_subsk_content_before
-
 - wp_subsk_content_after
 - wp_subsk_cost_before
 - wp_subsk_cost_after
