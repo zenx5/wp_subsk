@@ -32,4 +32,18 @@ class PluginK
             add_meta_box('id_' . $meta['title'], $meta['title'], $meta['render_callback'], 'subs_types', 'normal', 'high');
         }
     }
+
+    public static function create_db($tables, $pk)
+    {
+        global $wpdb;
+        $sql = "";
+        foreach ($tables as $tableName => $table) {
+            $sql = "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}$tableName ` (";
+            foreach ($table as $field => $description) {
+                $sql .= " `$field` $description, ";
+            }
+            $sql .= "PRIMARY KEY (`" . $pk[$tableName] . "`)) ENGINE = InnoDB";
+        }
+        $wpdb->get_results($sql);
+    }
 }

@@ -7,6 +7,22 @@ class WP_Subsk extends PluginK
 {
     public static function active()
     {
+        /*
+            meta_subs_type
+                ID
+                id_post
+                name
+                value
+        */
+
+        self::create_db([
+            "metas_subs_type" => [
+                "ID" => "INT NOT NULL AUTO_INCREMENT",
+                "id_post" => "INT NOT NULL",
+                "name" => "VARCHAR(45) NULL",
+                "value" => "VARCHAR(45) NULL",
+            ]
+        ], ["metas_subs_type" => "ID"]);
     }
 
     public static function deactive()
@@ -29,6 +45,13 @@ class WP_Subsk extends PluginK
         echo "<script>";
         include 'uicomponents/currency.js';
         echo "</script>";
+    }
+
+    public static function get_value($id, $name)
+    {
+        global $wpdb;
+        $sql = "SELECT value FROM `{$wpdb->prefix}metas_subs_type` WHERE name=`$name` AND post_id=$id";
+        $wpdb->get_results($sql);
     }
 
     public static function get_currency()
@@ -138,6 +161,11 @@ class WP_Subsk extends PluginK
         ]);
     }
 
+    public static function get_content($type)
+    {
+        return [];
+    }
+
     public static function create_metas()
     {
 
@@ -145,25 +173,25 @@ class WP_Subsk extends PluginK
             [
                 'title' => 'Precio',
                 'render_callback' => function () {
-                    include 'metas/costo.php';
+                    include 'metas/cost.php';
                 }
             ],
             [
                 'title' => 'Periodo',
                 'render_callback' => function () {
-                    include 'metas/periodo.php';
+                    include 'metas/period.php';
                 }
             ],
-            [
-                'title' => 'Post Type Permitido',
-                'render_callback' => function () {
-                    include 'metas/contenido.php';
-                }
-            ],
+            // [
+            //     'title' => 'Post Type Permitido',
+            //     'render_callback' => function () {
+            //         include 'metas/content.php';
+            //     }
+            // ],
             [
                 'title' => 'Accesos Especiales',
                 'render_callback' => function () {
-                    include 'metas/accesos.php';
+                    include 'metas/access.php';
                 }
             ]
 
