@@ -1,0 +1,15 @@
+.wp_subsk_cost_container{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.wp_subsk_cost_container #wp_subsk_cost,
+#wp_subsk_period{
+    width: 100px;
+}
+
+.wp_subsk_cost_container #wp_subsk_currency{
+    font-weight: 500;
+    margin-left: 10px;
+}

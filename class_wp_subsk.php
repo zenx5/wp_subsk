@@ -5,6 +5,13 @@ require 'class_formk.php';
 
 class WP_Subsk extends PluginK
 {
+    public static $var_metas = [
+        'wp_subsk_cost',
+        'wp_subsk_currency',
+        'wp_subsk_content_select_post_enable',
+        'wp_subsk_period'
+    ];
+
     public static function active()
     {
         /*
@@ -36,15 +43,20 @@ class WP_Subsk extends PluginK
     public static function init()
     {
         add_action('init', array('WP_Subsk', 'create_subs_type'));
-        add_action('admin_head', array('WP_Subsk', 'insert_uicomponents'));
+        add_action('admin_head', array('WP_Subsk', 'admin_head'));
         add_action('add_meta_boxes_subs_types', array('WP_Subsk', 'create_metas'));
+        add_action('save_post', array('WP_Subsk', 'set_meta'));
+        add_action('publish_post', array('WP_Subsk', 'set_meta'));
+        add_action('draft_to_publish', array('WP_Subsk', 'set_meta'));
     }
 
-    public static function insert_uicomponents()
+    public static function admin_head()
     {
-        echo "<script>";
-        include 'uicomponents/currency.js';
-        echo "</script>";
+?>
+        <style>
+            <?php include 'admin/style.css'; ?>
+        </style>
+<?php
     }
 
     public static function get_value($id, $name)
@@ -56,14 +68,14 @@ class WP_Subsk extends PluginK
 
     public static function get_currency()
     {
-        $currency = "$";
+        $currency = WP_Subsk::get_var_meta('wp_subsk_currency');
         $currency = apply_filters('wp_subsk_currency', $currency);
         return $currency;
     }
 
     public static function get_period()
     {
-        $period = 0;
+        $period = self::get_var_meta('wp_subsk_period');
         $period = apply_filters('wp_subsk_period', $period);
         return $period;
     }
@@ -102,13 +114,13 @@ class WP_Subsk extends PluginK
         $step = self::get_period_step();
         $max = self::get_period_max();
         $period = self::get_period();
-        return "<input type='number' style='width: 25%;' name='wp_subsk_cost' id='wp_subsk_cost' value='$period' min='0' max='$max' step='$step' /> $format";
+        return "<input type='number' name='wp_subsk_period' id='wp_subsk_period' value='$period' min='0' max='$max' step='$step' /> $format";
     }
 
 
     public static function get_cost()
     {
-        $cost = 0;
+        $cost = self::get_var_meta('wp_subsk_cost');
         $cost = apply_filters('wp_subsk_cost', $cost);
         return $cost;
     }
@@ -139,7 +151,7 @@ class WP_Subsk extends PluginK
         $min = self::get_cost_min();
         $max = self::get_cost_max();
         $step = self::get_cost_step();
-        return "<input type='number' style='width: 25%;' name='wp_subsk_cost' id='wp_subsk_cost' value='$cost' min='$min' max='$max' step='$step' />";
+        return "<input type='number' name='wp_subsk_cost' id='wp_subsk_cost' value='$cost' min='$min' max='$max' step='$step' />";
     }
 
     public static function create_subs_type()
@@ -163,13 +175,21 @@ class WP_Subsk extends PluginK
 
     public static function get_content($type)
     {
+        if ($type == 'wp_subsk_content_select_post_enable') {
+            return self::get_var_meta('wp_subsk_content_select_post_enable');
+        }
         return [];
+    }
+
+    public static function set_meta($post_id, $post = null)
+    {
+        self::set_var_meta($post_id, WP_Subsk::$var_metas);
     }
 
     public static function create_metas()
     {
 
-        self::create_meta([
+        self::create_meta('subs_types', [
             [
                 'title' => 'Precio',
                 'render_callback' => function () {
@@ -188,12 +208,12 @@ class WP_Subsk extends PluginK
             //         include 'metas/content.php';
             //     }
             // ],
-            [
-                'title' => 'Accesos Especiales',
-                'render_callback' => function () {
-                    include 'metas/access.php';
-                }
-            ]
+            // [
+            //     'title' => 'Accesos Especiales',
+            //     'render_callback' => function () {
+            //         include 'metas/access.php';
+            //     }
+            // ]
 
         ]);
     }
