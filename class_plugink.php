@@ -35,7 +35,9 @@ if (!class_exists('PluginK')) {
         public static function set_var_meta($post_id, $vars)
         {
             foreach ($vars as $var) {
-                update_post_meta($post_id, $var, $_POST[$var]);
+                if (isset($_POST[$var])) {
+                    update_post_meta($post_id, $var, $_POST[$var]);
+                }
             }
         }
 
@@ -54,7 +56,7 @@ if (!class_exists('PluginK')) {
                     return $meta[0];
                 }
             }
-            return null;
+            return '';
         }
 
 

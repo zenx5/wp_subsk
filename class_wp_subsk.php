@@ -9,7 +9,14 @@ class WP_Subsk extends PluginK
         'wp_subsk_cost',
         'wp_subsk_currency',
         'wp_subsk_content_select_post_enable',
-        'wp_subsk_period'
+        'wp_subsk_period',
+        'wp_subsk_period_format'
+    ];
+
+    public static $messages = [
+        "not_access" => "<b>sin acceso a este contenido</b>",
+        "any_error" => "<b>Hubo un error</b>",
+        "not_assign" => "<b>No tiene ningun tipo de suscripcion asignada</b>"
     ];
 
     public static function active()
@@ -48,6 +55,9 @@ class WP_Subsk extends PluginK
         add_action('save_post', array('WP_Subsk', 'set_meta'));
         add_action('publish_post', array('WP_Subsk', 'set_meta'));
         add_action('draft_to_publish', array('WP_Subsk', 'set_meta'));
+        add_filter('the_content', array('WP_Subsk', 'filter_content'));
+        self::$messages = apply_filters('wp_subsk_update_message', self::$messages);
+        self::$var_metas = apply_filters('wp_subsk_update_var_metas', self::$var_metas);
     }
 
     public static function admin_head()
@@ -59,6 +69,18 @@ class WP_Subsk extends PluginK
 <?php
     }
 
+    public static function get_name_sub()
+    {
+        $post = new WP_Query([
+            "ID" => get_the_ID(),
+            "post_type" => 'subs_types'
+        ]);
+        //$_SERVER['REQUEST_URI']
+        return $post->post->post_name;
+    }
+
+
+
     public static function get_value($id, $name)
     {
         global $wpdb;
@@ -68,7 +90,7 @@ class WP_Subsk extends PluginK
 
     public static function get_currency()
     {
-        $currency = WP_Subsk::get_var_meta('wp_subsk_currency');
+        $currency = WP_Subsk::get_var_meta('wp_subsk_currency') | '$';
         $currency = apply_filters('wp_subsk_currency', $currency);
         return $currency;
     }
@@ -103,8 +125,21 @@ class WP_Subsk extends PluginK
 
     public static function get_period_format()
     {
-        $format = 'dias';
+        $format = self::get_var_meta('wp_subsk_period_format');
         $format = apply_filters('wp_subsk_period_format', $format);
+        return $format;
+    }
+
+
+
+    public static function get_period_format_options()
+    {
+        $format = [
+            ['tag' => 'dias', 'ratio' => 1],
+            ['tag' => 'meses', 'ratio' => 30],
+            ['tag' => 'años', 'ratio' => 365]
+        ];
+        $format = apply_filters('wp_subsk_period_format_options', $format);
         return $format;
     }
 
@@ -114,7 +149,13 @@ class WP_Subsk extends PluginK
         $step = self::get_period_step();
         $max = self::get_period_max();
         $period = self::get_period();
-        return "<input type='number' name='wp_subsk_period' id='wp_subsk_period' value='$period' min='0' max='$max' step='$step' /> $format";
+        $format_options = self::get_period_format_options();
+        $options = "";
+        foreach ($format_options as $option) {
+            $selected = ($option['ratio'] == $format) ? 'selected' : '';
+            $options .= "<option value='{$option['ratio']}' $selected>{$option['tag']}</option>";
+        }
+        return "<input type='number' name='wp_subsk_period' id='wp_subsk_period' value='$period' min='0' max='$max' step='$step' /> <select name='wp_subsk_period_format' id='wp_subsk_period_format'>$options</select>";
     }
 
 
@@ -173,17 +214,76 @@ class WP_Subsk extends PluginK
         ]);
     }
 
-    public static function get_content($type)
+    public static function message_error($tag_msg)
     {
-        if ($type == 'wp_subsk_content_select_post_enable') {
-            return self::get_var_meta('wp_subsk_content_select_post_enable');
+        $tag = apply_filters('wp_subsk_message_tag', $tag_msg);
+        return apply_filters('wp_subsk_message_error', self::$messages[$tag]);
+    }
+
+
+    public static function filter_content($content)
+    {
+        $user = wp_get_current_user();
+        if (in_array('suscriptor', $user->roles)) {
+            $type_subs = get_user_meta($user->data->ID, 'wp_subsk_type_subs');
+            if (count($type_subs) > 0) {
+                $type_subs = $type_subs[0];
+                $post_id = get_the_ID();
+                if ($post_id) {
+                    $post = new WP_Query([
+                        'ID' => $post_id
+                    ]);
+                    $posts = json_decode(get_option('wp_subsk_selected_post_enable_' . $type_subs), true) ?? [];
+                    $post_type = $post->post->post_type;
+                    if (in_array($post_type, $posts)) {
+                        return self::message_error('not_access');
+                    }
+                } else {
+                    return self::message_error('any_error');
+                }
+            } else {
+                return self::message_error('not_assign');
+            }
         }
-        return [];
+        return $content;
     }
 
     public static function set_meta($post_id, $post = null)
     {
-        self::set_var_meta($post_id, WP_Subsk::$var_metas);
+        if (isset($_POST['wp_subsk_btn_select_post_enable'])) {
+            $type_subs = $_POST['wp_subsk_type_subs'];
+            $new_content = $_POST['wp_subsk_content_select_post_enable'];
+            echo $new_content;
+            $posts = json_decode(get_option('wp_subsk_selected_post_enable_' . $type_subs), true) ?? [];
+            $posts[] = $new_content;
+            update_option('wp_subsk_selected_post_enable_' . $type_subs, json_encode($posts));
+        } else {
+            self::if_delete_any_post();
+            self::set_var_meta($post_id, WP_Subsk::$var_metas);
+        }
+    }
+
+    public static function if_delete_any_post()
+    {
+        $type_subs = isset($_POST['wp_subsk_type_subs']) ? $_POST['wp_subsk_type_subs'] : null;
+        if (!$type_subs) {
+            return;
+        }
+        $is_delete = false;
+        $posts = json_decode(get_option('wp_subsk_selected_post_enable_' . $type_subs), true) ?? [];
+        echo (json_encode($posts)) . "<br>";
+        $posts_filtered = [];
+        foreach ($posts as $post) {
+            echo $post . "<br>";
+            if (!isset($_POST['wp_subsk_delete_type_' . $post])) {
+                $posts_filtered[] = $post;
+            } else {
+                $is_delete = true;
+            }
+        };
+        if ($is_delete) {
+            update_option('wp_subsk_selected_post_enable_' . $type_subs, json_encode($posts_filtered));
+        }
     }
 
     public static function create_metas()
@@ -202,18 +302,18 @@ class WP_Subsk extends PluginK
                     include 'metas/period.php';
                 }
             ],
-            // [
-            //     'title' => 'Post Type Permitido',
-            //     'render_callback' => function () {
-            //         include 'metas/content.php';
-            //     }
-            // ],
-            // [
-            //     'title' => 'Accesos Especiales',
-            //     'render_callback' => function () {
-            //         include 'metas/access.php';
-            //     }
-            // ]
+            [
+                'title' => 'Post Type Permitido',
+                'render_callback' => function () {
+                    include 'metas/content.php';
+                }
+            ],
+            [
+                'title' => 'Accesos Especiales',
+                'render_callback' => function () {
+                    include 'metas/access.php';
+                }
+            ]
 
         ]);
     }

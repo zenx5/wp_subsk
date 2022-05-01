@@ -13,3 +13,41 @@
     font-weight: 500;
     margin-left: 10px;
 }
+
+
+
+#wp_subsk_content .wp_subsk_content_list_post .container{
+    margin:5px;
+    padding:5px;
+    display:flex;
+    width: 200px;
+    align-items:center;
+    justify-content: space-between;
+    border-radius: 10px;
+
+}
+
+#wp_subsk_content .wp_subsk_content_list_post .container:hover{
+    box-shadow: 0 0 5px black;
+}
+
+#wp_subsk_content .wp_subsk_content_list_post .container .name{
+    padding:5px;
+}
+
+#wp_subsk_content .wp_subsk_content_list_post .container .btn-del{
+    background-color: white; 
+    border: 1px solid rgba(0,0,0,10%); 
+    font-size: 12px;
+    padding: 3px 5px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+#wp_subsk_content .wp_subsk_content_list_post .container .btn-del:hover{
+    background-color: lightgray;
+}
+
+#wp_subsk_content .wp_subsk_content_list_post .container .btn-del:active{
+    background-color: gray;
+}
