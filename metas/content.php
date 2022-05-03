@@ -2,8 +2,13 @@
 do_action('wp_subsk_content_before');
 
 
-$type_subs = self::get_name_sub();
-$posts = json_decode(get_option('wp_subsk_selected_post_enable_' . $type_subs), true) ?? [];
+$type_subs = self::get_sub(get_the_ID());
+$id_unique = WP_Subsk::get_var_meta('wp_subsk_id_unique');
+
+echo ("<script>console.log(" . json_encode($type_subs) . ")</script>");
+$type_subs = $type_subs->post_name;
+
+$posts = json_decode(get_option('wp_subsk_selected_post_enable_' . $id_unique), true) ?? [];
 
 
 ?>

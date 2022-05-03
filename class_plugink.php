@@ -32,11 +32,15 @@ if (!class_exists('PluginK')) {
             }
         }
 
-        public static function set_var_meta($post_id, $vars)
+        public static function set_var_meta($post_id, $vars, $values = [])
         {
             foreach ($vars as $var) {
                 if (isset($_POST[$var])) {
-                    update_post_meta($post_id, $var, $_POST[$var]);
+                    if (count($value) == 0) {
+                        update_post_meta($post_id, $var, $_POST[$var]);
+                    } else {
+                        update_post_meta($post_id, $var, $values[$var]);
+                    }
                 }
             }
         }
