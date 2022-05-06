@@ -16,7 +16,10 @@
 
 
 
-#wp_subsk_content .wp_subsk_content_list_post .container{
+
+
+#wp_subsk_content .wp_subsk_content_list_post .container,
+#wp_subsk_content_specify .wp_subsk_content_list_post .container{
     margin:5px;
     padding:5px;
     display:flex;
@@ -24,18 +27,31 @@
     align-items:center;
     justify-content: space-between;
     border-radius: 10px;
-
+}
+#wp_subsk_content_specify .wp_subsk_content_list_post .container > div{
+    display:flex;
+    flex-direction: column;
 }
 
-#wp_subsk_content .wp_subsk_content_list_post .container:hover{
+#wp_subsk_content_specify .wp_subsk_content_list_post .container > div > sub{
+    position: relative;
+    padding: 0 5px;
+    left:10px;
+    font-weight: bold;
+}
+
+#wp_subsk_content .wp_subsk_content_list_post .container:hover,
+#wp_subsk_content_specify .wp_subsk_content_list_post .container:hover{
     box-shadow: 0 0 5px black;
 }
 
-#wp_subsk_content .wp_subsk_content_list_post .container .name{
+#wp_subsk_content .wp_subsk_content_list_post .container .name,
+#wp_subsk_content_specify .wp_subsk_content_list_post .container .name{
     padding:5px;
 }
 
-#wp_subsk_content .wp_subsk_content_list_post .container .btn-del{
+#wp_subsk_content .wp_subsk_content_list_post .container .btn-del,
+#wp_subsk_content_specify .wp_subsk_content_list_post .container .btn-del{
     background-color: white; 
     border: 1px solid rgba(0,0,0,10%); 
     font-size: 12px;
@@ -44,10 +60,12 @@
     cursor: pointer;
 }
 
-#wp_subsk_content .wp_subsk_content_list_post .container .btn-del:hover{
+#wp_subsk_content .wp_subsk_content_list_post .container .btn-del:hover,
+#wp_subsk_content_specify .wp_subsk_content_list_post .container .btn-del:hover{
     background-color: lightgray;
 }
 
-#wp_subsk_content .wp_subsk_content_list_post .container .btn-del:active{
+#wp_subsk_content .wp_subsk_content_list_post .container .btn-del:active,
+#wp_subsk_content_specify .wp_subsk_content_list_post .container .btn-del:active{
     background-color: gray;
 }

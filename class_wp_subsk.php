@@ -58,10 +58,35 @@ class WP_Subsk extends PluginK
         add_action('draft_to_publish', array('WP_Subsk', 'set_meta'));
         add_action('edit_user_profile', array('WP_Subsk', 'edit_profile'));
         add_action('edit_user_profile_update', array('WP_Subsk', 'update_profile'));
-        add_filter('the_content', array('WP_Subsk', 'filter_content'));
+        add_action('wp_enqueue_scripts', array('WP_Subsk', 'ajax_url'));
+        //add_action('wp_ajax_nopriv_get_publish_posts', array('WP_Subsk', 'get_publish_posts'));
+        add_action('wp_ajax_get_publish_posts', array('WP_Subsk', 'get_publish_posts'));
+        add_action('loop_start', array('WP_Subsk', 'filter_content'));
+        add_filter('single_template', array('WP_Subsk', 'custom_template'));
+        //add_filter('the_content', array('WP_Subsk', 'filter_content'));
 
         self::$messages = apply_filters('wp_subsk_update_message', self::$messages);
         self::$var_metas = apply_filters('wp_subsk_update_var_metas', self::$var_metas);
+    }
+
+    public static function get_publish_posts()
+    {
+        $posts = new WP_Query(array(
+            "post_type" => $_POST['post_type'],
+            "post_per_page" => -1
+        ));
+
+        echo json_encode(array(
+            "post_type" => $_POST['post_type'],
+            "posts" => $posts->posts
+        ));
+        wp_die();
+    }
+    public static function ajax_url()
+    {
+        //wp_register_script('wp_subsk_script_js', get_stylesheet_directory_uri() . '/admin/js/publish_posts.js', ['jquery'], 1, true);
+        wp_enqueue_script('wp_subsk_script_js', '/admin/js/publish_posts.js', ['jquery'], 1, true);
+        wp_localize_script('wp_subsk_script_js', 'wp_subsk_ajax', ['url' => admin_url('admin-ajax.php')]);
     }
 
     public static function admin_head()
@@ -70,6 +95,38 @@ class WP_Subsk extends PluginK
         <style>
             <?php include 'admin/style.css'; ?>
         </style>
+        <script>
+            (function($) {
+                $(document).ready(function() {
+                    console.log("READY!!")
+                    $('#wp_subsk_content_select_post_type').change(function(ev) {
+                        const post_type = ev.target.value;
+                        console.log(post_type)
+                        $.ajax({
+                            type: 'post',
+                            url: ajaxurl,
+                            data: {
+                                action: 'get_publish_posts',
+                                post_type: post_type
+                            },
+                            beforeSend: function() {
+                                console.log('Sending....')
+                            },
+                            success: function(response) {
+                                response = JSON.parse(response)
+                                console.log(response)
+                                let options = "<option value='-1'>Seleccionar</option>"
+                                response.posts.forEach(post => {
+                                    options += "<option value='" + post.ID + "'>" + post.post_name + "</option>"
+                                })
+                                $('#wp_subsk_content_select_post_specify').html(options);
+                            }
+                        })
+                    })
+                })
+
+            })(jQuery);
+        </script>
         <?php
     }
 
@@ -84,30 +141,29 @@ class WP_Subsk extends PluginK
             } else {
                 $type_subs = -1;
             }
-        ?>
-            <h3>Tipo de suscripcion</h3>
-            <script>
-                console.log(<?= json_encode($type_subs) ?>)
-            </script>
-            <table class="form-table">
-                <tr>
-                    <th>
-                        <label for="wp_subsk_type_subs">Suscripcion: </label>
-                    </th>
-                    <td>
-                        <select id="wp_subsk_type_subs" name="wp_subsk_type_subs" class="regular-text">
-                            <option value="-1">Sin suscripcion</option>
-                            <?php foreach (self::get_all_sub() as $sub) : ?>
-                                <?php if ($sub->post_status == 'publish') : ?>
-                                    <option value="<?= $sub->ID ?>" <?= ($type_subs == $sub->ID) ? 'selected' : ''; ?>><?= $sub->post_name ?></option>
-                                <?php endif; ?>
-                            <?php endforeach; ?>
-                        </select>
-                        <p class="description">algo aqui sobre las descripciones</p>
-                    </td>
-                </tr>
-            </table>
-<?php
+        ?> < h3> Tipo de suscripcion < /h3>
+                    < script>
+                        console.log(<?= json_encode($type_subs) ?>)
+                        </script>
+                        <table class="form-table">
+                            <tr>
+                                <th>
+                                    <label for="wp_subsk_type_subs">Suscripcion: </label>
+                                </th>
+                                <td>
+                                    <select id="wp_subsk_type_subs" name="wp_subsk_type_subs" class="regular-text">
+                                        <option value="-1">Sin suscripcion</option>
+                                        <?php foreach (self::get_all_sub() as $sub) : ?>
+                                            <?php if ($sub->post_status == 'publish') : ?>
+                                                <option value="<?= $sub->ID ?>" <?= ($type_subs == $sub->ID) ? 'selected' : ''; ?>><?= $sub->post_name ?></option>
+                                            <?php endif; ?>
+                                        <?php endforeach; ?>
+                                    </select>
+                                    <p class="description">algo aqui sobre las descripciones</p>
+                                </td>
+                            </tr>
+                        </table>
+            <?php
         endif;
     }
 
@@ -197,6 +253,19 @@ class WP_Subsk extends PluginK
     }
 
 
+    public static function get_period_format_tag()
+    {
+        $tag = "";
+        $ratio = self::get_period_format();
+        $options = self::get_period_format_options();
+        foreach ($options as $option) {
+            if ($option['ratio'] == $ratio) {
+                $tag = $option['tag'];
+            }
+        }
+        return apply_filters('wp_subsk_period_format_tag', $tag);
+    }
+
 
     public static function get_period_format_options()
     {
@@ -265,7 +334,7 @@ class WP_Subsk extends PluginK
     {
         self::create_type_post('subs_types', 'Tipo de Subscriptor', 'Tipos de subscriptores', [
             'description' => 'Define los diferentes niveles de subscriptores que se manejaran el site',
-            'public'       => false,
+            'public'       => true,
             'can_export'   => false,
             'show_ui'      => true,
             'show_in_menu' => true,
@@ -286,8 +355,7 @@ class WP_Subsk extends PluginK
         return apply_filters('wp_subsk_message_error', self::$messages[$tag]);
     }
 
-
-    public static function filter_content($content)
+    public static function filter_content($query_content)
     {
         //usuario activo
         $user = wp_get_current_user();
@@ -300,24 +368,56 @@ class WP_Subsk extends PluginK
             if (count($type_subs) > 0) {
                 $type_subs = $type_subs[0];
                 $post_id = get_the_ID();
-                if ($post_id) {
-                    $post = new WP_Query([
-                        'ID' => $post_id
-                    ]);
-                    $id_unique = WP_Subsk::get_var_meta('wp_subsk_id_unique', $type_subs);
-                    $posts = json_decode(get_option('wp_subsk_selected_post_enable_' . $id_unique), true) ?? [];
-                    $post_type = $post->post->post_type;
-                    if (!in_array($post_type, $posts)) {
-                        return self::message_error('not_access');
+                try {
+                    if ($post_id) {
+                        if (is_page()) {
+                            $post = new WP_Query([
+                                'page_id' => $post_id
+                            ]);
+                        } else {
+                            $post = new WP_Query([
+                                'p' => $post_id
+                            ]);
+                        }
+                        $id_unique = WP_Subsk::get_var_meta('wp_subsk_id_unique', $type_subs);
+                        $posts = json_decode(get_option('wp_subsk_selected_post_enable_' . $id_unique), true) ?? [];
+                        $post_type = get_post_type();
+                        if (in_array($post_type, $posts)) {
+                            $posts_specify = json_decode(get_option('wp_subsk_selected_post_specify_' . $id_unique), true) ?? [];
+                            $ID = $post->post ? $post->post->ID : -1;
+                            foreach ($posts_specify as $post) {
+                                if (($post['ID'] == $ID) && ($post['post_type'] == $post_type)) {
+                                    $query_content->post->post_content = self::message_error('not_access');
+                                    //return self::message_error('not_access');
+                                }
+                            }
+                            //return $content;
+                        } else {
+                            $posts_specify = json_decode(get_option('wp_subsk_selected_post_specify_' . $id_unique), true) ?? [];
+                            $ID = $post->post->ID;
+                            foreach ($posts_specify as $post) {
+                                if (($post['ID'] == $ID) && ($post['post_type'] == $post_type)) {
+                                    $query_content->post->post_content = self::message_error('not_access');
+                                    return self::message_error('not_access');
+                                }
+                            }
+                            $query_content->post->post_content = self::message_error('not_access');
+                            return self::message_error('not_access');
+                        }
+                    } else {
+                        $query_content->post->post_content = self::message_error('any_error');
+                        return self::message_error('any_error');
                     }
-                } else {
-                    return self::message_error('any_error');
+                } catch (Exception $err) {
+                    $query_content->post->post_content = $err;
+                    return json_encode($err);
                 }
             } else {
+                $query_content->post->post_content = self::message_error('not_assign');
                 return self::message_error('not_assign');
             }
         }
-        return $content;
+        return $query_content->post->post_content;
     }
 
     public static function generate_id()
@@ -350,15 +450,30 @@ class WP_Subsk extends PluginK
             }
             $type_subs = $_POST['wp_subsk_type_subs'];
             $new_content = $_POST['wp_subsk_content_select_post_enable'];
-            echo $new_content;
             $posts = json_decode(get_option('wp_subsk_selected_post_enable_' . $id_unique), true) ?? [];
             $posts[] = $new_content;
             update_option('wp_subsk_selected_post_enable_' . $id_unique, json_encode($posts));
+        } elseif (isset($_POST['wp_subsk_btn_select_post_specify'])) {
+            $id_unique = $_POST['wp_subsk_id_unique'];
+            if ($id_unique == '') {
+                $id_unique = self::generate_id();
+            }
+            //$type_subs = $_POST['wp_subsk_type_subs'];
+            $id_post = $_POST['wp_subsk_content_select_post_specify'];
+            $post_type = $_POST['wp_subsk_content_select_post_type'];
+            $posts = json_decode(get_option('wp_subsk_selected_post_specify_' . $id_unique), true) ?? [];
+            $posts[] = [
+                'ID' => $id_post,
+                'post_type' => $post_type
+            ];
+            update_option('wp_subsk_selected_post_specify_' . $id_unique, json_encode($posts));
         } else {
             self::if_delete_any_post();
             self::set_var_meta($post_id, WP_Subsk::$var_metas);
         }
     }
+
+
 
     public static function if_delete_any_post()
     {
@@ -368,18 +483,31 @@ class WP_Subsk extends PluginK
         }
         $is_delete = false;
         $posts = json_decode(get_option('wp_subsk_selected_post_enable_' . $id_unique), true) ?? [];
-        echo (json_encode($posts)) . "<br>";
         $posts_filtered = [];
         foreach ($posts as $post) {
-            echo $post . "<br>";
             if (!isset($_POST['wp_subsk_delete_type_' . $post])) {
                 $posts_filtered[] = $post;
             } else {
                 $is_delete = true;
             }
-        };
+        }
         if ($is_delete) {
             update_option('wp_subsk_selected_post_enable_' . $id_unique, json_encode($posts_filtered));
+        }
+
+        $is_delete = false;
+        $posts_specify = json_decode(get_option('wp_subsk_selected_post_specify_' . $id_unique), true) ?? [];
+        $count = count($posts_specify);
+        $posts_filtered = [];
+        for ($i = 0; $i < $count; $i++) {
+            if (!isset($_POST['wp_subsk_delete_specify_post_' . $i])) {
+                $posts_filtered[] = $posts_specify[$i];
+            } else {
+                $is_delete = true;
+            }
+        }
+        if ($is_delete) {
+            update_option('wp_subsk_selected_post_specify_' . $id_unique, json_encode($posts_filtered));
         }
     }
 
@@ -419,5 +547,13 @@ class WP_Subsk extends PluginK
             // ]
 
         ]);
+    }
+
+    public static function custom_template($template)
+    {
+        if (is_single()) {
+            return self::get_template('templates/single-subs_types.php');
+        }
+        return $template;
     }
 }
