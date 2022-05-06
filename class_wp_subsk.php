@@ -552,8 +552,49 @@ class WP_Subsk extends PluginK
     public static function custom_template($template)
     {
         if (is_single()) {
-            return self::get_template('templates/single-subs_types.php');
+            if ('subs_types' === get_post_type()) {
+                return self::get_template('templates/single-subs_types.php');
+            }
         }
         return $template;
+    }
+
+
+    public static function get_field_subscriber()
+    {
+        return apply_filters('wp_subsk_field_suscriber_showed', [
+            [
+                "name" => "index",
+                "attrs" => [
+                    ["name" => "style", "value" => "text-align:center"]
+                ],
+                "attrs_head"  => [],
+                "name_head" => "#"
+            ],
+            [
+                "name" => "user_nicename",
+                "attrs" => [
+                    ["name" => "style", "value" => "text-align:center"]
+                ],
+                "attrs_head"  => [],
+                "name_head" => "User"
+            ],
+            [
+                "name" => "display_name",
+                "attrs" => [
+                    ["name" => "style", "value" => "text-align:center"]
+                ],
+                "attrs_head"  => [],
+                "name_head" => "Name"
+            ],
+            [
+                "name" => "user_email",
+                "attrs" => [
+                    ["name" => "style", "value" => "text-align:center"]
+                ],
+                "attrs_head"  => [],
+                "name_head" => "Email"
+            ]
+        ]);
     }
 }

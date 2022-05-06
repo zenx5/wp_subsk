@@ -16,8 +16,26 @@ $id_unique = WP_Subsk::get_var_meta('wp_subsk_id_unique');
 $posts_enable = json_decode(get_option('wp_subsk_selected_post_enable_' . $id_unique), true) ?? [];
 $posts_specify = json_decode(get_option('wp_subsk_selected_post_specify_' . $id_unique), true) ?? [];
 $others = [];
-get_header(); ?>
+$user = wp_get_current_user();
 
+if (isset($_GET['adquirir'])) {
+    update_user_meta(
+        $user->ID,
+        'wp_subsk_type_subs',
+        $post->ID
+    );
+}
+
+$type_subs = get_user_meta($user->data->ID, 'wp_subsk_type_subs');
+if (count($type_subs) > 0) {
+    $type_subs = $type_subs[0];
+} else {
+    $type_subs = -1;
+}
+
+get_header();
+
+?>
 <main style="margin:20px 0; width:100%;">
     <h2 style="margin-bottom: 20px;"><?= $post->post_title ?></h2>
     <section style="display:flex; flex-direction: row; width: 100%;">
@@ -31,16 +49,20 @@ get_header(); ?>
                     <sub style="display:flex; justify-content:center;font-size:50px;top:-25px"><?= WP_Subsk::get_period_format_tag() ?></sub>
                 </div>
             </div>
-            <button>Adquirir</button>
+            <?php if (in_array('subscriber', $user->roles) && $type_subs == -1) : ?>
+                <a class="button" href="/?post_type=subs_types&p=<?= $post->ID ?>&adquirir" style="text-align: center; font-weight:bold">Adquirir</a>
+            <?php elseif (!in_array('administrator', $user->roles)) : ?>
+                <i class="button disabled" style="text-align: center; font-weight:bold; color: grey;background-color:lightgray">Suscripcion adquirida</i>
+            <?php endif; ?>
         </div>
         <div style="display:flex; justify-content:center;width:50%">
             <ul>
-                <?php foreach ($posts_enable as $post) : ?>
+                <?php foreach ($posts_enable as $post2) : ?>
                     <li>
-                        <?= $post ?>
+                        <?= $post2 ?>
                         <ul>
                             <?php foreach ($posts_specify as $specify) : ?>
-                                <?php if ($specify['post_type'] == $post) : ?>
+                                <?php if ($specify['post_type'] == $post2) : ?>
                                     <li><?= WP_Subsk::get_post_name($specify['post_type'], $specify['ID'])  ?></li>
                                 <?php endif; ?>
                             <?php
@@ -73,9 +95,49 @@ get_header(); ?>
             </ul>
         </div>
     </section>
-    <section style="display:flex; flex-direction: row; width: 100%;">
+    <?php if (in_array('administrator', $user->roles)) : ?>
+        <section style="display:flex; flex-direction: row; width: 100%;">
+            <?php
+            $subscribers = get_users([
+                'role' => 'subscriber',
+                'meta_key' => 'wp_subsk_type_subs',
+                'meta_value' => $post->ID
+            ]);
 
-    </section>
+            $subscribers = apply_filters('wp_subks_get_subscribers', $subscribers);
+
+            if (count($subscribers) > 0) :
+            ?>
+                <table>
+                    <tr>
+                        <?php foreach (WP_Subsk::get_field_subscriber() as $field) : ?>
+                            <th <?php foreach ($field['attrs_head'] as $attr) {
+                                    echo $attr['name'] . "='" . $attr['value'] . "'";
+                                } ?>>
+                                <?= $field['name_head'] ?>
+                            </th>
+                        <?php endforeach; ?>
+                    </tr>
+                    <?php foreach ($subscribers as $index => $subscriber) : ?>
+                        <tr style="text-align: center;">
+                            <?php foreach (WP_Subsk::get_field_subscriber() as $field) : ?>
+                                <td <?php foreach ($field['attrs'] as $attr) {
+                                        echo $attr['name'] . "='" . $attr['value'] . "'";
+                                    } ?>>
+                                    <?php if ($field['name'] == 'index') : ?>
+                                        <?= $index ?>
+                                    <?php else : ?>
+                                        <?= $subscriber->{$field['name']} ?>
+                                    <?php endif; ?>
+                                </td>
+                            <?php endforeach; ?>
+                        </tr>
+                    <?php endforeach; ?>
+                </table>
+            <?php endif; ?>
+        </section>
+    <?php endif; ?>
+
 </main>
 <?php
 
