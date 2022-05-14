@@ -73,7 +73,7 @@ get_header();
                                             $is = true;
                                         }
                                     }
-                                    if (!$is) {
+                                    if ($is) {
                                         $others[] = $specify;
                                     }
                                 }
@@ -83,7 +83,7 @@ get_header();
                 <?php
                 endforeach;
                 if (count($others) > 0) : ?>
-                    <li> Other:
+                    <li> <?= _('Other') ?>:
                         <ul>
                             <?php foreach ($others as $other) : ?>
 
