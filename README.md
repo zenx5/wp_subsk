@@ -26,7 +26,7 @@
 
 ### Post Type permitidos:
 
-    En este metabox se decide a que tipos de contenidos son accesibles, puede ser de manera generica 
+    En este metabox se decide a que tipos de contenidos son accesibles, puede ser de manera generica
     o una entrada en particular
 
 ### Accesos Especiales:
@@ -35,8 +35,10 @@
     se tendra acceso con este tipo de suscripcion
 
 ## Hooks:
-    Los hooks "before" permiten agregar contenido antes de que se muestre el correspondiente contenido, 
+
+    Los hooks "before" permiten agregar contenido antes de que se muestre el correspondiente contenido,
     de la misma manera los hooks "after" lo hacen despues
+
 - wp_subsk_content_before
 - wp_subsk_content_after
 - wp_subsk_cost_before
@@ -45,6 +47,7 @@
 - wp_subsk_period_after
 
 ## Filters:
+
 - wp_subsk_currency
 - wp_subsk_period
 - wp_subsk_period_min
@@ -55,3 +58,17 @@
 - wp_subsk_cost_min
 - wp_subsk_cost_max
 - wp_subsk_cost_step
+
+# TEST
+
+## paypal test account:
+
+### Personal
+
+email: sb-lgyve6555691@personal.example.com
+password: L:94I&uW
+
+### Business
+
+sb-qk0bw6555151@business.example.com
+password: g.X$/0rf

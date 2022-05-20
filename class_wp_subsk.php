@@ -5,6 +5,7 @@ require 'class_formk.php';
 
 class WP_Subsk extends PluginK
 {
+
     public static $var_metas = [
         'wp_subsk_cost',
         'wp_subsk_currency',
@@ -51,7 +52,12 @@ class WP_Subsk extends PluginK
     public static function init()
     {
         add_action('init', array('WP_Subsk', 'create_subs_type'));
+        //remove_action('woocommerce_after_shop_loop_item', 'woocommerce_template_loop_add_to_cart');
+        remove_action('woocommerce_single_product_summary', 'woocommerce_template_single_add_to_cart', 30);
+        add_action('woocommerce_single_product_summary', array('WP_Subsk', 'add_to_cart'));
+        //add_action('woocommerce_simple_add_to_cart', array('WP_Subsk', 'custom_template'), 10);
         add_action('admin_head', array('WP_Subsk', 'admin_head'));
+        add_action('wp_head', array('WP_Subsk', 'wp_head'));
         add_action('add_meta_boxes_subs_types', array('WP_Subsk', 'create_metas'));
         add_action('save_post', array('WP_Subsk', 'set_meta'));
         add_action('publish_post', array('WP_Subsk', 'set_meta'));
@@ -63,10 +69,114 @@ class WP_Subsk extends PluginK
         add_action('wp_ajax_get_publish_posts', array('WP_Subsk', 'get_publish_posts'));
         add_action('loop_start', array('WP_Subsk', 'filter_content'));
         add_filter('single_template', array('WP_Subsk', 'custom_template'));
-        //add_filter('the_content', array('WP_Subsk', 'filter_content'));
+        add_filter('template_include', array('WP_Subsk', 'custom_template'), 50);
+        add_filter('woocommerce_product_single_add_to_cart_text', array('WP_Subsk', 'add_to_cart_text'));
+
+
+        add_filter('woocommerce_add_to_cart_quantity', function () {
+            return 1;
+        }); //array('WP_Subsk', 'unique_subs'));
+
+
+        //add_action('woocommerce_add_to_cart', array('WP_Subsk', 'add_to_cart'), 10, 6);
+        add_action('woocommerce_checkout_order_created', array('WP_Subsk', 'new_subscriber'));
 
         self::$messages = apply_filters('wp_subsk_update_message', self::$messages);
         self::$var_metas = apply_filters('wp_subsk_update_var_metas', self::$var_metas);
+
+        update_option('paypal_client_id', 'AaLvFXgQ6aYxkNQpECvHTYX5QGygTSWjo1LhzFS-b9WE6jBW4NXTjpTPJ8nIH99dyc_Kl_oKTNglf5pg');
+    }
+
+
+
+    public static function is_sub($product)
+    {
+        foreach (self::get_all_sub() as $sub) {
+            if ($sub->post_title == $product->get_name()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static function in_cart($detail = false)
+    {
+        $cart_key = array_keys(WC()->cart->cart_contents);
+        if (count($cart_key) > 0) {
+            $cart_key = $cart_key[0];
+            $cart_content = WC()->cart->cart_contents[$cart_key];
+
+            if ($cart_content['quantity'] > 0) {
+                $product = new WC_Product($cart_content['product_id']);
+                foreach (self::get_all_sub() as $sub) {
+                    if ($sub->post_title == $product->get_name()) {
+                        if ($detail) return $sub;
+                        else return true;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public static function add_to_cart($cart_item_key, $product_id = 0, $quantity = 1, $variation_id = null, $variation = null, $cart_item_data = null)
+    {
+        global $product;
+        $user = wp_get_current_user();
+        $subs = self::get_all_sub();
+        $type_subs = get_user_meta($user->ID, 'wp_subsk_type_subs');
+        if ($type_subs && count($type_subs) > 0) {
+            $currentSub = self::get_sub($type_subs[0]);
+        }
+        if (!$product && isset($_POST['add-to-cart'])) {
+            $cart_key = array_keys(WC()->cart->cart_contents)[0];
+            $cart_content = WC()->cart->cart_contents[$cart_key];
+            $product_id = $_POST['add-to-cart'];
+            $product = new WC_Product($product_id);
+            //Si la suscripcion actual es igual a la agregada en el carrito
+            if ($currentSub->post_title == $product->get_name()) {
+                self::set_subscriber($user->ID, $currentSub->ID);
+            }
+        }
+        //echo json_encode($subs);
+        //echo json_encode($type_subs);
+        $name = $product->get_name();
+
+        $template = 1; //debe ser suscriptor para adquirir el producto
+        foreach ($subs as $sub) {
+            if ($sub->post_title == $name) {
+                if (in_array('subscriber', $user->roles)) {
+                    if (count($type_subs) == 0) {
+                        $template = 2; //Suscribirse
+                    } else {
+                        $template = 3; //Cambiar Suscripcion
+                    }
+                }
+            }
+        }
+        include 'templates/woocommerce/add-to-cart/single-product/simple.php';
+    }
+
+    public static function add_to_cart_text($text)
+    {
+        global $product;
+        $name = $product->get_name();
+        $subs = self::get_all_sub();
+        $user = wp_get_current_user();
+
+        foreach ($subs as $sub) {
+            if ($sub->post_title == $name) {
+                if (in_array('subscriber', $user->roles)) {
+                    $type_subs = get_user_meta($user->data->ID, 'wp_subsk_type_subs');
+                    if (count($type_subs) == 0) {
+                        return 'Suscribirse';
+                    } else {
+                        return 'Cambiar Suscripcion';
+                    }
+                }
+            }
+        }
+        return $text;
     }
 
     public static function get_publish_posts()
@@ -89,9 +199,17 @@ class WP_Subsk extends PluginK
         wp_localize_script('wp_subsk_script_js', 'wp_subsk_ajax', ['url' => admin_url('admin-ajax.php')]);
     }
 
-    public static function admin_head()
+    public static function wp_head()
     {
 ?>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- <script src="https://www.paypal.com/sdk/js?client-id=<?= get_option('paypal_client_id') ?>"></script> -->
+    <?php
+    }
+
+    public static function admin_head()
+    {
+    ?>
         <style>
             <?php include 'admin/style.css'; ?>
         </style>
@@ -153,7 +271,8 @@ class WP_Subsk extends PluginK
     {
         $now = new DateTime();
         $diff = $now->diff(new DateTime(self::get_date_up($id)));
-        return self::get_var_meta('wp_subsk_period', self::get_type_sub($id)) - $diff->days;
+        $period = self::get_var_meta('wp_subsk_period', self::get_type_sub($id)) ? self::get_var_meta('wp_subsk_period', self::get_type_sub($id)) : 0;
+        return $period - $diff->days;
     }
 
     public static function edit_profile($user)
@@ -164,6 +283,33 @@ class WP_Subsk extends PluginK
     public static function update_profile($user_id)
     {
         include 'admin/update_profile.php';
+    }
+
+    public static function new_subscriber($order)
+    {
+        if (self::in_cart()) {
+            $sub = self::in_cart(true);
+            self::set_subscriber($order->get_customer_id(), $sub->ID);
+        }
+    }
+
+
+    public static function set_subscriber($id_user, $id_subscribtion, $date = null)
+    {
+        if (!$date) {
+            $date = new DateTime();
+        }
+
+        update_user_meta(
+            $id_user,
+            'wp_subsk_type_subs',
+            $id_subscribtion
+        );
+        update_user_meta(
+            $id_user,
+            'wp_subsk_date_up',
+            $date->format('Y-m-d')
+        );
     }
 
     public static function get_all_sub()
@@ -327,6 +473,12 @@ class WP_Subsk extends PluginK
             'supports'     => array('title'),
             'show_in_nav_menus' => false,
         ]);
+
+        self::pay_check();
+    }
+
+    public static function pay_check()
+    {
     }
 
     public static function message_error($tag_msg)
@@ -337,6 +489,8 @@ class WP_Subsk extends PluginK
 
     public static function filter_content($query_content)
     {
+        //die(json_encode(is_woocommerce()));
+        if (is_woocommerce() || is_cart() || is_checkout()) return $query_content->post->post_content;
         //usuario activo
         $user = wp_get_current_user();
         //el usuario activo es 'subscriber'
@@ -531,6 +685,10 @@ class WP_Subsk extends PluginK
         if (is_single()) {
             if ('subs_types' === get_post_type()) {
                 return self::get_template('templates/single-subs_types.php');
+            }
+            if ('product' === get_post_type()) {
+                //return self::get_template('templates/single-subs_types.php');
+                return self::get_template('templates/woocommerce/single-product.php');
             }
         }
         return $template;
