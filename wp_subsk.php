@@ -5,8 +5,8 @@
  * @version 1.7.2
  */
 /*
-Plugin Name: WP Subscription by Kavav
-Plugin URI: https://kavavdigital.com.ve
+Plugin Name: WP Subscription by Bohiques
+Plugin URI: https://bohiques.com
 Description: Plugin de subscripciones
 Author: Octavio Martinez
 Version: 1.0.0
