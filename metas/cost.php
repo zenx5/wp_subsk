@@ -1,12 +1,18 @@
  <?php
 
     $woo = class_exists('WooCommerce');
+    if (isset($_POST['wp_subsk_create_product'])) {
+        WP_Subsk::set_var_meta(get_the_ID(), ['wp_subsk_create_product'], ['1']);
+    }
     $create_product = WP_Subsk::get_var_meta('wp_subsk_create_product');
     if (!$create_product) {
         $create_product = "Crear Producto";
     }
 
-    do_action('wp_subsk_cost_before'); ?>
+    do_action('wp_subsk_cost_before');
+
+    echo json_encode($create_product);
+    ?>
 
  <div class="wp_subsk_cost_container" id="wp_subsk_cost_container">
      <table style="width:100%;">
@@ -20,7 +26,7 @@
                      <input type="button" style="width:100%;padding:5px;" disabled value="Crear Producto" />
                      <small>Requiere woocommerce</small>
                  <?php else : ?>
-                     <input type="submit" style="width:100%;padding:5px;" name="wp_subsk_create_product" value="<?= $create_product ?>" />
+                     <input type="submit" style="width:100%;padding:5px;" name="wp_subsk_create_product" value="Crear Producto" />
                  <?php endif; ?>
              </td>
          </tr>

@@ -11,6 +11,7 @@ $type_subs = $type_subs->post_name;
 $posts = json_decode(get_option('wp_subsk_selected_post_enable_' . $id_unique), true) ?? [];
 //update_option('wp_subsk_selected_post_specify_' . $id_unique, '[]');
 $posts_specify = json_decode(get_option('wp_subsk_selected_post_specify_' . $id_unique), true) ?? [];
+$type_action = json_decode(get_option('wp_subsk_selected_post_specify_type_' . $id_unique), true) ?? true;
 
 
 ?>
@@ -20,18 +21,35 @@ $posts_specify = json_decode(get_option('wp_subsk_selected_post_specify_' . $id_
 </script>
 <div id="wp_subsk_content" style="border-bottom: 1px solid lightgray; margin-bottom: 15px;padding-bottom: 10px;">
     <input type="hidden" name="wp_subsk_type_subs" value="<?= $type_subs ?>" />
-    <select id='wp_subsk_content_select_post_enable' name='wp_subsk_content_select_post_enable'>
-        <?php
-        global $wp_post_types;
-        foreach (apply_filters('wp_subsk_post_type_show', $wp_post_types) as $post) {
-            if (!in_array($post->name, $posts)) {
-                //echo "<div style='width: 200px; margin:2px;'><input id='$post->name' type='checkbox' /><label for='$post->name'>$post->name</label></div>";
-                echo "<option value='$post->name'>$post->name</option>";
-            }
-        }
-        ?>
-    </select>
-    <input type="submit" id="wp_subsk_btn_select_post_enable" name="wp_subsk_btn_select_post_enable" value="Agregar">
+    <table style="width:100%">
+        <tr style="width:100%">
+            <td style="width:30%">
+                <select id='wp_subsk_content_select_post_enable' name='wp_subsk_content_select_post_enable'>
+                    <?php
+                    global $wp_post_types;
+                    foreach (apply_filters('wp_subsk_post_type_show', $wp_post_types) as $post) {
+                        if (!in_array($post->name, $posts)) {
+                            //echo "<div style='width: 200px; margin:2px;'><input id='$post->name' type='checkbox' /><label for='$post->name'>$post->name</label></div>";
+                            echo "<option value='$post->name'>$post->name</option>";
+                        }
+                    }
+                    ?>
+                </select>
+            </td>
+            <td style="width:25%">
+                <input type="submit" id="wp_subsk_btn_select_post_enable" name="wp_subsk_btn_select_post_enable" value="Agregar">
+            </td>
+            <td style="width:25%">
+                <strong>Tipo de Acción</strong>
+            </td>
+            <td style="width:20%">
+                <input type="radio" id="opcion1" <?= $type_action ? 'checked' : '' ?> name="<?= 'wp_subsk_selected_post_specify_type_' . $id_unique ?>"><label for="opcion1">Permitir</label><br>
+                <input type="radio" id="opcion2" <?= $type_action ? '' : 'checked' ?> name="<?= 'wp_subsk_selected_post_specify_type_' . $id_unique ?>"><label for="opcion2">Restringir</label>
+            </td>
+        </tr>
+    </table>
+
+
     <div class="wp_subsk_content_list_post">
         <?php
         //update_option('wp_subsk_selected_post_enable', "[]");
