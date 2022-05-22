@@ -68,6 +68,8 @@ class WP_Subsk extends PluginK
         //add_action('wp_ajax_nopriv_get_publish_posts', array('WP_Subsk', 'get_publish_posts'));
         add_action('wp_ajax_get_publish_posts', array('WP_Subsk', 'get_publish_posts'));
         add_action('loop_start', array('WP_Subsk', 'filter_content'));
+        add_action('woocommerce_edit_account_form_start', array('WP_Subsk', 'add_details_suscription'));
+
         add_filter('single_template', array('WP_Subsk', 'custom_template'));
         add_filter('template_include', array('WP_Subsk', 'custom_template'), 50);
         add_filter('woocommerce_product_single_add_to_cart_text', array('WP_Subsk', 'add_to_cart_text'));
@@ -87,7 +89,36 @@ class WP_Subsk extends PluginK
         update_option('paypal_client_id', 'AaLvFXgQ6aYxkNQpECvHTYX5QGygTSWjo1LhzFS-b9WE6jBW4NXTjpTPJ8nIH99dyc_Kl_oKTNglf5pg');
     }
 
+    public static function add_details_suscription()
+    {
+        $user = wp_get_current_user();
 
+        echo "<script>console.log(" . json_encode($user) . ")</script>";
+        if (in_array('subscriber', $user->roles)) :
+            if (count(get_user_meta($user->data->ID, 'wp_subsk_type_subs')) != 0) :
+?>
+                <fieldset style="margin-bottom: 50px; ">
+                    <legend>Datos de la Suscripcion</legend>
+                    <p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-wide">
+                        <label>Tipo de Suscripción</label>
+                        <input type="text" class="woocommerce-Input woocommerce-Input--text input-text" disabled value="<?= self::get_sub(get_user_meta($user->data->ID, 'wp_subsk_type_subs')[0])->post_title ?>" />
+                        <span>
+                            <em>Si necesita cambiar su suscripcion dirijase a la tienda y seleccione entre los diferentes planes disponibles</em>
+                        </span>
+                    </p>
+                    <p class="woocommerce-form-row woocommerce-form-row--first form-row form-row-first">
+                        <label>fecha de Suscripción</label>
+                        <input type="date" class="woocommerce-Input woocommerce-Input--text input-text" disabled value="<?= self::get_date_up($user->data->ID) ?>" />
+                    </p>
+                    <p class="woocommerce-form-row woocommerce-form-row--last form-row form-row-last">
+                        <label>Dias Restantes</label>
+                        <input type="number" class="woocommerce-Input woocommerce-Input--text input-text" disabled value="<?= self::get_time_left($user->data->ID) ?>" />
+                    </p>
+                </fieldset>
+        <?php
+            endif;
+        endif;
+    }
 
     public static function is_sub($product)
     {
@@ -201,7 +232,7 @@ class WP_Subsk extends PluginK
 
     public static function wp_head()
     {
-?>
+        ?>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <!-- <script src="https://www.paypal.com/sdk/js?client-id=<?= get_option('paypal_client_id') ?>"></script> -->
     <?php
@@ -490,7 +521,7 @@ class WP_Subsk extends PluginK
     public static function filter_content($query_content)
     {
         //die(json_encode(is_woocommerce()));
-        if (is_woocommerce() || is_cart() || is_checkout()) return $query_content->post->post_content;
+        if (is_woocommerce() || is_cart() || is_checkout() || is_account_page()) return $query_content->post->post_content;
         //usuario activo
         $user = wp_get_current_user();
         //el usuario activo es 'subscriber'
