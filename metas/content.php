@@ -11,8 +11,7 @@ $type_subs = $type_subs->post_name;
 $posts = json_decode(get_option('wp_subsk_selected_post_enable_' . $id_unique), true) ?? [];
 //update_option('wp_subsk_selected_post_specify_' . $id_unique, '[]');
 $posts_specify = json_decode(get_option('wp_subsk_selected_post_specify_' . $id_unique), true) ?? [];
-$type_action = json_decode(get_option('wp_subsk_selected_post_specify_type_' . $id_unique), true) ?? true;
-
+$type_control = WP_Subsk::get_var_meta('wp_subsk_type_control') ?? "1";
 
 ?>
 
@@ -43,8 +42,8 @@ $type_action = json_decode(get_option('wp_subsk_selected_post_specify_type_' . $
                 <strong>Tipo de Acción</strong>
             </td>
             <td style="width:20%">
-                <input type="radio" id="opcion1" <?= $type_action ? 'checked' : '' ?> name="<?= 'wp_subsk_selected_post_specify_type_' . $id_unique ?>"><label for="opcion1">Permitir</label><br>
-                <input type="radio" id="opcion2" <?= $type_action ? '' : 'checked' ?> name="<?= 'wp_subsk_selected_post_specify_type_' . $id_unique ?>"><label for="opcion2">Restringir</label>
+                <input type="radio" id="opcion1" <?= $type_control ? 'checked' : '' ?> name="<?= 'wp_subsk_type_control' ?>" value="1"><label for="opcion1">Permitir</label><br>
+                <input type="radio" id="opcion2" <?= $type_control ? '' : 'checked' ?> name="<?= 'wp_subsk_type_control' ?>" value="0"><label for="opcion2">Restringir</label>
             </td>
         </tr>
     </table>

@@ -5,14 +5,14 @@ require 'class_formk.php';
 
 class WP_Subsk extends PluginK
 {
-
     public static $var_metas = [
         'wp_subsk_cost',
         'wp_subsk_currency',
         'wp_subsk_content_select_post_enable',
         'wp_subsk_period',
         'wp_subsk_period_format',
-        'wp_subsk_id_unique'
+        'wp_subsk_id_unique',
+        'wp_subsk_type_control'
     ];
 
     public static $messages = [
@@ -514,14 +514,15 @@ class WP_Subsk extends PluginK
                                 'p' => $post_id
                             ]);
                         }
-                        $id_unique = WP_Subsk::get_var_meta('wp_subsk_id_unique', $type_subs);
+                        $id_unique = self::get_var_meta('wp_subsk_id_unique');
                         $posts = json_decode(get_option('wp_subsk_selected_post_enable_' . $id_unique), true) ?? [];
                         $post_type = get_post_type();
                         if (in_array($post_type, $posts)) {
                             $posts_specify = json_decode(get_option('wp_subsk_selected_post_specify_' . $id_unique), true) ?? [];
+                            $type_control = self::get_var_meta('wp_subsk_type_control') ?? "1";
                             $ID = $post->post ? $post->post->ID : -1;
                             foreach ($posts_specify as $post) {
-                                if (($post['ID'] == $ID) && ($post['post_type'] == $post_type)) {
+                                if (($post['ID'] == $ID) && ($post['post_type'] == $post_type) && $type_control) {
                                     $query_content->post->post_content = self::message_error('not_access');
                                     //return self::message_error('not_access');
                                 }
@@ -529,9 +530,10 @@ class WP_Subsk extends PluginK
                             //return $content;
                         } else {
                             $posts_specify = json_decode(get_option('wp_subsk_selected_post_specify_' . $id_unique), true) ?? [];
+                            $type_control = self::get_var_meta('wp_subsk_type_control') ?? "1";
                             $ID = $post->post->ID;
                             foreach ($posts_specify as $post) {
-                                if (($post['ID'] == $ID) && ($post['post_type'] == $post_type)) {
+                                if (($post['ID'] == $ID) && ($post['post_type'] == $post_type) && $type_control) {
                                     $query_content->post->post_content = self::message_error('not_access');
                                     return self::message_error('not_access');
                                 }
