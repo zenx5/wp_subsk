@@ -18,7 +18,8 @@ class WP_Subsk extends PluginK
     public static $messages = [
         "not_access" => "<b>sin acceso a este contenido</b>",
         "any_error" => "<b>Hubo un error</b>",
-        "not_assign" => "<b>No tiene ningun tipo de suscripcion asignada</b>"
+        "not_assign" => "<b>No tiene ningun tipo de suscripcion asignada</b>",
+        "not_login" => "<b>Debe hacer login para acceder a este contenido</b>"
     ];
 
     public static function active()
@@ -583,6 +584,70 @@ class WP_Subsk extends PluginK
             } else {
                 $query_content->post->post_content = self::message_error('not_assign');
                 return self::message_error('not_assign');
+            }
+        }else if( count($user->roles) == 0 ){
+            //getting current post
+            if (is_page()) {
+                $post = new WP_Query([
+                    'page_id' => get_the_ID()
+                ]);
+            } else {
+                $post = new WP_Query([
+                    'p' => get_the_ID()
+                ]);
+            }
+
+            $current_title = $post->posts[0]->post_title;
+            $current_type = $post->posts[0]->post_type;
+
+            //getting all subscription
+            $post_subs_query = new WP_Query([
+                "post_type" => "subs_types",
+                "post_per_page" => -1
+            ]);
+            $post_subs = $post_subs_query->posts;
+
+            //mapping of subscription
+            foreach( $post_subs as $sub ){
+                $id_unique = self::get_var_meta('wp_subsk_id_unique',$sub->ID);
+                $type_control = self::get_var_meta('wp_subsk_type_control',$sub->ID) ?? "1";
+                $bySpecify = json_decode( get_option('wp_subsk_selected_post_specify_' . $id_unique) );
+                $byType = json_decode( get_option('wp_subsk_selected_post_enable_' . $id_unique) );
+                
+                if( $bySpecify ){
+                    foreach( $bySpecify as $specify ){
+                        if ( 'page' === $specify->post_type ) {
+                            $detail = new WP_Query([
+                                'page_id' => $specify->ID
+                            ]);
+                        } else {
+                            $detail = new WP_Query([
+                                'p' => $specify->ID,
+                                'post_type' => $specify->post_type
+                            ]);
+                        }
+                        if( 
+                            ($detail->posts[0]->post_title == $current_title) &&
+                            ($detail->posts[0]->post_type == $current_type) &&
+                            ($type_control == '0')
+                        ) {
+                            $query_content->post->post_content = self::message_error('not_login');
+                            return self::message_error('not_login');
+                        }
+                    }
+                }
+                
+                if( $byType ){
+                    foreach( $byType as $type ){
+                        if( 
+                            ($type == $current_type) &&
+                            ($type_control == '0')
+                        ) {
+                            $query_content->post->post_content = self::message_error('not_login');
+                            return self::message_error('not_login');
+                        }
+                    }
+                }
             }
         }
         return $query_content->post->post_content;
