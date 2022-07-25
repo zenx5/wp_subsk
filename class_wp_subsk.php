@@ -68,7 +68,8 @@ class WP_Subsk extends PluginK
         add_action('wp_enqueue_scripts', array('WP_Subsk', 'ajax_url'));
         //add_action('wp_ajax_nopriv_get_publish_posts', array('WP_Subsk', 'get_publish_posts'));
         add_action('wp_ajax_get_publish_posts', array('WP_Subsk', 'get_publish_posts'));
-        add_action('loop_start', array('WP_Subsk', 'filter_content'));
+        add_action('the_content', array('WP_Subsk', 'filter_content'));
+        //add_action('loop_start', array('WP_Subsk', 'filter_content', 1));
         add_action('woocommerce_edit_account_form_start', array('WP_Subsk', 'add_details_suscription'));
 
         add_filter('single_template', array('WP_Subsk', 'custom_template'));
@@ -519,10 +520,10 @@ class WP_Subsk extends PluginK
         return apply_filters('wp_subsk_message_error', self::$messages[$tag]);
     }
 
-    public static function filter_content($query_content)
+    public static function filter_content($content)
     {
         //die(json_encode(is_woocommerce()));
-        if (is_woocommerce() || is_cart() || is_checkout() || is_account_page()) return $query_content->post->post_content;
+        if (is_woocommerce() || is_cart() || is_checkout() || is_account_page()) return $content;
         //usuario activo
         $user = wp_get_current_user();
         //el usuario activo es 'subscriber'
@@ -555,34 +556,27 @@ class WP_Subsk extends PluginK
                             $ID = $post->post ? $post->post->ID : -1;
                             foreach ($posts_specify as $post) {
                                 if (($post['ID'] == $ID) && ($post['post_type'] == $post_type) && $type_control) {
-                                    $query_content->post->post_content = self::message_error('not_access');
-                                    //return self::message_error('not_access');
+                                    return self::message_error('not_access');
                                 }
                             }
-                            //return $content;
                         } else {
                             $posts_specify = json_decode(get_option('wp_subsk_selected_post_specify_' . $id_unique), true) ?? [];
                             $type_control = self::get_var_meta('wp_subsk_type_control') ?? "1";
                             $ID = $post->post->ID;
                             foreach ($posts_specify as $post) {
                                 if (($post['ID'] == $ID) && ($post['post_type'] == $post_type) && $type_control) {
-                                    $query_content->post->post_content = self::message_error('not_access');
                                     return self::message_error('not_access');
                                 }
                             }
-                            $query_content->post->post_content = self::message_error('not_access');
                             return self::message_error('not_access');
                         }
                     } else {
-                        $query_content->post->post_content = self::message_error('any_error');
                         return self::message_error('any_error');
                     }
                 } catch (Exception $err) {
-                    $query_content->post->post_content = $err;
                     return json_encode($err);
                 }
             } else {
-                $query_content->post->post_content = self::message_error('not_assign');
                 return self::message_error('not_assign');
             }
         }else if( count($user->roles) == 0 ){
@@ -600,13 +594,13 @@ class WP_Subsk extends PluginK
             $current_title = $post->posts[0]->post_title;
             $current_type = $post->posts[0]->post_type;
 
+            
             //getting all subscription
             $post_subs_query = new WP_Query([
                 "post_type" => "subs_types",
                 "post_per_page" => -1
             ]);
             $post_subs = $post_subs_query->posts;
-
             //mapping of subscription
             foreach( $post_subs as $sub ){
                 $id_unique = self::get_var_meta('wp_subsk_id_unique',$sub->ID);
@@ -631,26 +625,23 @@ class WP_Subsk extends PluginK
                             ($detail->posts[0]->post_type == $current_type) &&
                             ($type_control == '0')
                         ) {
-                            $query_content->post->post_content = self::message_error('not_login');
                             return self::message_error('not_login');
                         }
                     }
                 }
-                
                 if( $byType ){
                     foreach( $byType as $type ){
                         if( 
                             ($type == $current_type) &&
                             ($type_control == '0')
                         ) {
-                            $query_content->post->post_content = self::message_error('not_login');
                             return self::message_error('not_login');
                         }
                     }
                 }
             }
         }
-        return $query_content->post->post_content;
+        return $content;
     }
 
     public static function generate_id()
