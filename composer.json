@@ -1,0 +1,28 @@
+{
+    "name": "zenx5/wp_subsk",
+    "type": "project",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Zenx5\\WpSubsk\\": "src/"
+        },
+        "files": [
+            "src/class_wp_subsk.php"
+        ]
+    },
+    "authors": [
+        {
+            "name": "Octavio Martinez",
+            "email": "omartinez1618@gmail.com"
+        }
+    ],
+    "require": {
+        "zenx5/plugink": "v1.0.1"
+    },
+    "repositories": [
+        {
+            "type":"vcs",
+            "url": "https://github.com/zenx5/plugin-base-k.git"
+        }
+    ]
+}

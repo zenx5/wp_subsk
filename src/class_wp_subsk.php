@@ -1,7 +1,5 @@
 <?php
 
-require 'class_plugink.php';
-require 'class_formk.php';
 
 class WP_Subsk extends PluginK
 {
@@ -522,6 +520,7 @@ class WP_Subsk extends PluginK
 
     public static function filter_content($content)
     {
+        
         //die(json_encode(is_woocommerce()));
         if (is_woocommerce() || is_cart() || is_checkout() || is_account_page()) return $content;
         //usuario activo
