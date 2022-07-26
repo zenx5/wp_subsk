@@ -1,0 +1,55 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "7af810318c1812625f3d58a89b27e624",
+    "packages": [
+        {
+            "name": "zenx5/plugink",
+            "version": "v1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zenx5/plugin-base-k.git",
+                "reference": "d580e4b706a52c4266185ef2b9e1f6bed4bfd243"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zenx5/plugin-base-k/zipball/d580e4b706a52c4266185ef2b9e1f6bed4bfd243",
+                "reference": "d580e4b706a52c4266185ef2b9e1f6bed4bfd243",
+                "shasum": ""
+            },
+            "type": "package",
+            "autoload": {
+                "files": [
+                    "src/class_plugink.php"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Octavio Martinez",
+                    "email": "omartinez1618@gmail.com"
+                }
+            ],
+            "description": "base para plugins",
+            "support": {
+                "source": "https://github.com/zenx5/plugin-base-k/tree/v1.0.1",
+                "issues": "https://github.com/zenx5/plugin-base-k/issues"
+            },
+            "time": "2022-07-26T00:47:08+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": [],
+    "plugin-api-version": "2.3.0"
+}
