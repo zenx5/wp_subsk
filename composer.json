@@ -17,7 +17,8 @@
         }
     ],
     "require": {
-        "zenx5/plugink": "v1.0.1"
+        "zenx5/plugink": "v1.0.1",
+        "phpmailer/phpmailer": "^6.6"
     },
     "repositories": [
         {
