@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @package WP_Rulette_Kavav
- * @version 1.7.2
+ * @package WP_Subsk
+ * @version 1.0.0
  */
 /*
 Plugin Name: WP Subscription by Bohiques
@@ -17,7 +17,5 @@ require 'vendor/autoload.php';
 
 register_activation_hook(__FILE__, array('WP_Subsk', 'active'));
 register_deactivation_hook(__FILE__, array('WP_Subsk', 'deactive'));
-// register_uninstall_hook(__FILE__, array('WP_Subsk', 'uninstall') );
 
 WP_Subsk::init();
-//add_action('init', array('WP_Subsk', 'init'));
