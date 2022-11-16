@@ -371,7 +371,7 @@ class WP_Subsk extends PluginK
 
     public static function get_currency()
     {
-        $currency = WP_Subsk::get_var_meta('wp_subsk_currency') | '$';
+        $currency = self::get_var_meta('wp_subsk_currency') ?? '$';
         $currency = apply_filters('wp_subsk_currency', $currency);
         return $currency;
     }
