@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "cron/cron",
-            "version": "1.6.0",
+            "version": "1.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Cron/Cron.git",
-                "reference": "103d8562aca8a5fd135c69b3fe93aad0b5b701d4"
+                "reference": "144014c35f30f58dd4af605445eefae3df75fbbf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Cron/Cron/zipball/103d8562aca8a5fd135c69b3fe93aad0b5b701d4",
-                "reference": "103d8562aca8a5fd135c69b3fe93aad0b5b701d4",
+                "url": "https://api.github.com/repos/Cron/Cron/zipball/144014c35f30f58dd4af605445eefae3df75fbbf",
+                "reference": "144014c35f30f58dd4af605445eefae3df75fbbf",
                 "shasum": ""
             },
             "require": {
@@ -51,22 +51,22 @@
             "description": "Cronjobs",
             "support": {
                 "issues": "https://github.com/Cron/Cron/issues",
-                "source": "https://github.com/Cron/Cron/tree/1.6.0"
+                "source": "https://github.com/Cron/Cron/tree/1.7.0"
             },
-            "time": "2021-12-29T12:06:58+00:00"
+            "time": "2022-11-14T23:03:13+00:00"
         },
         {
             "name": "phpmailer/phpmailer",
-            "version": "v6.6.4",
+            "version": "v6.6.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPMailer/PHPMailer.git",
-                "reference": "a94fdebaea6bd17f51be0c2373ab80d3d681269b"
+                "reference": "8b6386d7417526d1ea4da9edb70b8352f7543627"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/a94fdebaea6bd17f51be0c2373ab80d3d681269b",
-                "reference": "a94fdebaea6bd17f51be0c2373ab80d3d681269b",
+                "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/8b6386d7417526d1ea4da9edb70b8352f7543627",
+                "reference": "8b6386d7417526d1ea4da9edb70b8352f7543627",
                 "shasum": ""
             },
             "require": {
@@ -90,8 +90,8 @@
                 "hayageek/oauth2-yahoo": "Needed for Yahoo XOAUTH2 authentication",
                 "league/oauth2-google": "Needed for Google XOAUTH2 authentication",
                 "psr/log": "For optional PSR-3 debug logging",
-                "stevenmaguire/oauth2-microsoft": "Needed for Microsoft XOAUTH2 authentication",
-                "symfony/polyfill-mbstring": "To support UTF-8 if the Mbstring PHP extension is not enabled (^1.2)"
+                "symfony/polyfill-mbstring": "To support UTF-8 if the Mbstring PHP extension is not enabled (^1.2)",
+                "thenetworg/oauth2-azure": "Needed for Microsoft XOAUTH2 authentication"
             },
             "type": "library",
             "autoload": {
@@ -123,7 +123,7 @@
             "description": "PHPMailer is a full-featured email creation and transfer class for PHP",
             "support": {
                 "issues": "https://github.com/PHPMailer/PHPMailer/issues",
-                "source": "https://github.com/PHPMailer/PHPMailer/tree/v6.6.4"
+                "source": "https://github.com/PHPMailer/PHPMailer/tree/v6.6.5"
             },
             "funding": [
                 {
@@ -131,20 +131,20 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-08-22T09:22:00+00:00"
+            "time": "2022-10-07T12:23:10+00:00"
         },
         {
             "name": "symfony/polyfill-php80",
-            "version": "v1.26.0",
+            "version": "v1.27.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-php80.git",
-                "reference": "cfa0ae98841b9e461207c13ab093d76b0fa7bace"
+                "reference": "7a6ff3f1959bb01aefccb463a0f2cd3d3d2fd936"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-php80/zipball/cfa0ae98841b9e461207c13ab093d76b0fa7bace",
-                "reference": "cfa0ae98841b9e461207c13ab093d76b0fa7bace",
+                "url": "https://api.github.com/repos/symfony/polyfill-php80/zipball/7a6ff3f1959bb01aefccb463a0f2cd3d3d2fd936",
+                "reference": "7a6ff3f1959bb01aefccb463a0f2cd3d3d2fd936",
                 "shasum": ""
             },
             "require": {
@@ -153,7 +153,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-main": "1.26-dev"
+                    "dev-main": "1.27-dev"
                 },
                 "thanks": {
                     "name": "symfony/polyfill",
@@ -198,7 +198,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-php80/tree/v1.26.0"
+                "source": "https://github.com/symfony/polyfill-php80/tree/v1.27.0"
             },
             "funding": [
                 {
@@ -214,7 +214,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-05-10T07:21:04+00:00"
+            "time": "2022-11-03T14:55:06+00:00"
         },
         {
             "name": "symfony/process",

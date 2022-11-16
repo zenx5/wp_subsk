@@ -365,7 +365,7 @@ class WP_Subsk extends PluginK
     public static function get_value($id, $name)
     {
         global $wpdb;
-        $sql = "SELECT value FROM `{$wpdb->prefix}metas_subs_type` WHERE name=`$name` AND post_id=$id";
+        $sql = "SELECT value FROM `".$wpdb->prefix."metas_subs_types` WHERE name=`".$name."` AND post_id=".$id;
         $wpdb->get_results($sql);
     }
 
@@ -666,8 +666,6 @@ class WP_Subsk extends PluginK
 
     public static function set_meta($post_id, $post = null)
     {
-
-
         if (isset($_POST['wp_subsk_btn_select_post_enable'])) {
             $id_unique = $_POST['wp_subsk_id_unique'];
             if ($id_unique == '') {
