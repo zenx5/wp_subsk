@@ -1,16 +1,16 @@
 <?php
 
 
-class WP_Subsk extends PluginK
+class BH_Subsk extends PluginK
 {
     public static $var_metas = [
-        'wp_subsk_cost',
-        'wp_subsk_currency',
-        'wp_subsk_content_select_post_enable',
-        'wp_subsk_period',
-        'wp_subsk_period_format',
-        'wp_subsk_id_unique',
-        'wp_subsk_type_control'
+        'BH_Subsk_cost',
+        'BH_Subsk_currency',
+        'BH_Subsk_content_select_post_enable',
+        'BH_Subsk_period',
+        'BH_Subsk_period_format',
+        'BH_Subsk_id_unique',
+        'BH_Subsk_type_control'
     ];
 
     public static $messages = [
@@ -50,41 +50,41 @@ class WP_Subsk extends PluginK
 
     public static function init()
     {
-        add_action('init', array('WP_Subsk', 'create_subs_type'));
+        add_action('init', array('BH_Subsk', 'create_subs_type'));
         //remove_action('woocommerce_after_shop_loop_item', 'woocommerce_template_loop_add_to_cart');
         remove_action('woocommerce_single_product_summary', 'woocommerce_template_single_add_to_cart', 30);
-        add_action('woocommerce_single_product_summary', array('WP_Subsk', 'add_to_cart'));
-        //add_action('woocommerce_simple_add_to_cart', array('WP_Subsk', 'custom_template'), 10);
-        add_action('admin_head', array('WP_Subsk', 'admin_head'));
-        add_action('wp_head', array('WP_Subsk', 'wp_head'));
-        add_action('add_meta_boxes_subs_types', array('WP_Subsk', 'create_metas'));
-        add_action('save_post', array('WP_Subsk', 'set_meta'));
-        add_action('publish_post', array('WP_Subsk', 'set_meta'));
-        add_action('draft_to_publish', array('WP_Subsk', 'set_meta'));
-        add_action('edit_user_profile', array('WP_Subsk', 'edit_profile'));
-        add_action('edit_user_profile_update', array('WP_Subsk', 'update_profile'));
-        add_action('wp_enqueue_scripts', array('WP_Subsk', 'ajax_url'));
-        //add_action('wp_ajax_nopriv_get_publish_posts', array('WP_Subsk', 'get_publish_posts'));
-        add_action('wp_ajax_get_publish_posts', array('WP_Subsk', 'get_publish_posts'));
-        add_action('the_content', array('WP_Subsk', 'filter_content'));
-        //add_action('loop_start', array('WP_Subsk', 'filter_content', 1));
-        add_action('woocommerce_edit_account_form_start', array('WP_Subsk', 'add_details_suscription'));
+        add_action('woocommerce_single_product_summary', array('BH_Subsk', 'add_to_cart'));
+        //add_action('woocommerce_simple_add_to_cart', array('BH_Subsk', 'custom_template'), 10);
+        add_action('admin_head', array('BH_Subsk', 'admin_head'));
+        add_action('wp_head', array('BH_Subsk', 'wp_head'));
+        add_action('add_meta_boxes_subs_types', array('BH_Subsk', 'create_metas'));
+        add_action('save_post', array('BH_Subsk', 'set_meta'));
+        add_action('publish_post', array('BH_Subsk', 'set_meta'));
+        add_action('draft_to_publish', array('BH_Subsk', 'set_meta'));
+        add_action('edit_user_profile', array('BH_Subsk', 'edit_profile'));
+        add_action('edit_user_profile_update', array('BH_Subsk', 'update_profile'));
+        add_action('wp_enqueue_scripts', array('BH_Subsk', 'ajax_url'));
+        //add_action('wp_ajax_nopriv_get_publish_posts', array('BH_Subsk', 'get_publish_posts'));
+        add_action('wp_ajax_get_publish_posts', array('BH_Subsk', 'get_publish_posts'));
+        add_action('the_content', array('BH_Subsk', 'filter_content'));
+        //add_action('loop_start', array('BH_Subsk', 'filter_content', 1));
+        add_action('woocommerce_edit_account_form_start', array('BH_Subsk', 'add_details_suscription'));
 
-        add_filter('single_template', array('WP_Subsk', 'custom_template'));
-        add_filter('template_include', array('WP_Subsk', 'custom_template'), 50);
-        add_filter('woocommerce_product_single_add_to_cart_text', array('WP_Subsk', 'add_to_cart_text'));
+        add_filter('single_template', array('BH_Subsk', 'custom_template'));
+        add_filter('template_include', array('BH_Subsk', 'custom_template'), 50);
+        add_filter('woocommerce_product_single_add_to_cart_text', array('BH_Subsk', 'add_to_cart_text'));
 
 
         add_filter('woocommerce_add_to_cart_quantity', function () {
             return 1;
-        }); //array('WP_Subsk', 'unique_subs'));
+        }); //array('BH_Subsk', 'unique_subs'));
 
 
-        //add_action('woocommerce_add_to_cart', array('WP_Subsk', 'add_to_cart'), 10, 6);
-        add_action('woocommerce_checkout_order_created', array('WP_Subsk', 'new_subscriber'));
+        //add_action('woocommerce_add_to_cart', array('BH_Subsk', 'add_to_cart'), 10, 6);
+        add_action('woocommerce_checkout_order_created', array('BH_Subsk', 'new_subscriber'));
 
-        self::$messages = apply_filters('wp_subsk_update_message', self::$messages);
-        self::$var_metas = apply_filters('wp_subsk_update_var_metas', self::$var_metas);
+        self::$messages = apply_filters('BH_Subsk_update_message', self::$messages);
+        self::$var_metas = apply_filters('BH_Subsk_update_var_metas', self::$var_metas);
 
         update_option('paypal_client_id', 'AaLvFXgQ6aYxkNQpECvHTYX5QGygTSWjo1LhzFS-b9WE6jBW4NXTjpTPJ8nIH99dyc_Kl_oKTNglf5pg');
     }
@@ -95,13 +95,13 @@ class WP_Subsk extends PluginK
 
         echo "<script>console.log(" . json_encode($user) . ")</script>";
         if (in_array('subscriber', $user->roles)) :
-            if (count(get_user_meta($user->data->ID, 'wp_subsk_type_subs')) != 0) :
+            if (count(get_user_meta($user->data->ID, 'BH_Subsk_type_subs')) != 0) :
 ?>
                 <fieldset style="margin-bottom: 50px; ">
                     <legend>Datos de la Suscripcion</legend>
                     <p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-wide">
                         <label>Tipo de Suscripción</label>
-                        <input type="text" class="woocommerce-Input woocommerce-Input--text input-text" disabled value="<?= self::get_sub(get_user_meta($user->data->ID, 'wp_subsk_type_subs')[0])->post_title ?>" />
+                        <input type="text" class="woocommerce-Input woocommerce-Input--text input-text" disabled value="<?= self::get_sub(get_user_meta($user->data->ID, 'BH_Subsk_type_subs')[0])->post_title ?>" />
                         <span>
                             <em>Si necesita cambiar su suscripcion dirijase a la tienda y seleccione entre los diferentes planes disponibles</em>
                         </span>
@@ -155,7 +155,7 @@ class WP_Subsk extends PluginK
         global $product;
         $user = wp_get_current_user();
         $subs = self::get_all_sub();
-        $type_subs = get_user_meta($user->ID, 'wp_subsk_type_subs');
+        $type_subs = get_user_meta($user->ID, 'BH_Subsk_type_subs');
         if ($type_subs && count($type_subs) > 0) {
             $currentSub = self::get_sub($type_subs[0]);
         }
@@ -198,7 +198,7 @@ class WP_Subsk extends PluginK
         foreach ($subs as $sub) {
             if ($sub->post_title == $name) {
                 if (in_array('subscriber', $user->roles)) {
-                    $type_subs = get_user_meta($user->data->ID, 'wp_subsk_type_subs');
+                    $type_subs = get_user_meta($user->data->ID, 'BH_Subsk_type_subs');
                     if (count($type_subs) == 0) {
                         return 'Suscribirse';
                     } else {
@@ -225,9 +225,9 @@ class WP_Subsk extends PluginK
     }
     public static function ajax_url()
     {
-        //wp_register_script('wp_subsk_script_js', get_stylesheet_directory_uri() . '/admin/js/publish_posts.js', ['jquery'], 1, true);
-        wp_enqueue_script('wp_subsk_script_js', '/admin/js/publish_posts.js', ['jquery'], 1, true);
-        wp_localize_script('wp_subsk_script_js', 'wp_subsk_ajax', ['url' => admin_url('admin-ajax.php')]);
+        //wp_register_script('BH_Subsk_script_js', get_stylesheet_directory_uri() . '/admin/js/publish_posts.js', ['jquery'], 1, true);
+        wp_enqueue_script('BH_Subsk_script_js', '/admin/js/publish_posts.js', ['jquery'], 1, true);
+        wp_localize_script('BH_Subsk_script_js', 'BH_Subsk_ajax', ['url' => admin_url('admin-ajax.php')]);
     }
 
     public static function wp_head()
@@ -248,7 +248,7 @@ class WP_Subsk extends PluginK
             (function($) {
                 $(document).ready(function() {
                     console.log("READY!!")
-                    $('#wp_subsk_content_select_post_type').change(function(ev) {
+                    $('#BH_Subsk_content_select_post_type').change(function(ev) {
                         const post_type = ev.target.value;
                         console.log(post_type)
                         $.ajax({
@@ -268,7 +268,7 @@ class WP_Subsk extends PluginK
                                 response.posts.forEach(post => {
                                     options += "<option value='" + post.ID + "'>" + post.post_name + "</option>"
                                 })
-                                $('#wp_subsk_content_select_post_specify').html(options);
+                                $('#BH_Subsk_content_select_post_specify').html(options);
                             }
                         })
                     })
@@ -282,7 +282,7 @@ class WP_Subsk extends PluginK
 
     public static function get_type_sub($id)
     {
-        $type_subs = get_user_meta($id, 'wp_subsk_type_subs');
+        $type_subs = get_user_meta($id, 'BH_Subsk_type_subs');
         if (count($type_subs) > 0) {
             return $type_subs[0];
         }
@@ -291,7 +291,7 @@ class WP_Subsk extends PluginK
 
     public static function get_date_up($id)
     {
-        $dateup = get_user_meta($id, 'wp_subsk_date_up');
+        $dateup = get_user_meta($id, 'BH_Subsk_date_up');
         if (count($dateup) > 0) {
             return $dateup[0];
         }
@@ -302,7 +302,7 @@ class WP_Subsk extends PluginK
     {
         $now = new DateTime();
         $diff = $now->diff(new DateTime(self::get_date_up($id)));
-        $period = self::get_var_meta('wp_subsk_period', self::get_type_sub($id)) ? self::get_var_meta('wp_subsk_period', self::get_type_sub($id)) : 0;
+        $period = self::get_var_meta('BH_Subsk_period', self::get_type_sub($id)) ? self::get_var_meta('BH_Subsk_period', self::get_type_sub($id)) : 0;
         return $period - $diff->days;
     }
 
@@ -333,12 +333,12 @@ class WP_Subsk extends PluginK
 
         update_user_meta(
             $id_user,
-            'wp_subsk_type_subs',
+            'BH_Subsk_type_subs',
             $id_subscribtion
         );
         update_user_meta(
             $id_user,
-            'wp_subsk_date_up',
+            'BH_Subsk_date_up',
             $date->format('Y-m-d')
         );
     }
@@ -371,43 +371,43 @@ class WP_Subsk extends PluginK
 
     public static function get_currency()
     {
-        $currency = self::get_var_meta('wp_subsk_currency') ?? '$';
-        $currency = apply_filters('wp_subsk_currency', $currency);
+        $currency = self::get_var_meta('BH_Subsk_currency') ?? '$';
+        $currency = apply_filters('BH_Subsk_currency', $currency);
         return $currency;
     }
 
     public static function get_period()
     {
-        $period = self::get_var_meta('wp_subsk_period');
-        $period = apply_filters('wp_subsk_period', $period);
+        $period = self::get_var_meta('BH_Subsk_period');
+        $period = apply_filters('BH_Subsk_period', $period);
         return $period;
     }
 
     public static function get_period_min()
     {
         $period = 0;
-        $period = apply_filters('wp_subsk_period_min', $period);
+        $period = apply_filters('BH_Subsk_period_min', $period);
         return $period;
     }
 
     public static function get_period_max()
     {
         $period = 120;
-        $period = apply_filters('wp_subsk_period_max', $period);
+        $period = apply_filters('BH_Subsk_period_max', $period);
         return $period;
     }
 
     public static function get_period_step()
     {
         $period = 1;
-        $period = apply_filters('wp_subsk_period_step', $period);
+        $period = apply_filters('BH_Subsk_period_step', $period);
         return $period;
     }
 
     public static function get_period_format()
     {
-        $format = self::get_var_meta('wp_subsk_period_format');
-        $format = apply_filters('wp_subsk_period_format', $format);
+        $format = self::get_var_meta('BH_Subsk_period_format');
+        $format = apply_filters('BH_Subsk_period_format', $format);
         return $format;
     }
 
@@ -422,7 +422,7 @@ class WP_Subsk extends PluginK
                 $tag = $option['tag'];
             }
         }
-        return apply_filters('wp_subsk_period_format_tag', $tag);
+        return apply_filters('BH_Subsk_period_format_tag', $tag);
     }
 
 
@@ -433,7 +433,7 @@ class WP_Subsk extends PluginK
             ['tag' => 'meses', 'ratio' => 30],
             ['tag' => 'años', 'ratio' => 365]
         ];
-        $format = apply_filters('wp_subsk_period_format_options', $format);
+        $format = apply_filters('BH_Subsk_period_format_options', $format);
         return $format;
     }
 
@@ -449,34 +449,34 @@ class WP_Subsk extends PluginK
             $selected = ($option['ratio'] == $format) ? 'selected' : '';
             $options .= "<option value='{$option['ratio']}' $selected>{$option['tag']}</option>";
         }
-        return "<input type='number' name='wp_subsk_period' id='wp_subsk_period' value='$period' min='0' max='$max' step='$step' /> <select name='wp_subsk_period_format' id='wp_subsk_period_format'>$options</select>";
+        return "<input type='number' name='BH_Subsk_period' id='BH_Subsk_period' value='$period' min='0' max='$max' step='$step' /> <select name='BH_Subsk_period_format' id='BH_Subsk_period_format'>$options</select>";
     }
 
 
     public static function get_cost()
     {
-        $cost = self::get_var_meta('wp_subsk_cost');
-        $cost = apply_filters('wp_subsk_cost', $cost);
+        $cost = self::get_var_meta('BH_Subsk_cost');
+        $cost = apply_filters('BH_Subsk_cost', $cost);
         return $cost;
     }
 
     public static function get_cost_min()
     {
         $cost = 0;
-        $cost = apply_filters('wp_subsk_cost_min', $cost);
+        $cost = apply_filters('BH_Subsk_cost_min', $cost);
         return $cost;
     }
     public static function get_cost_max()
     {
         $cost = null;
-        $cost = apply_filters('wp_subsk_cost_max', $cost);
+        $cost = apply_filters('BH_Subsk_cost_max', $cost);
         return $cost;
     }
 
     public static function get_cost_step()
     {
         $cost = 0.1;
-        $cost = apply_filters('wp_subsk_cost_step', $cost);
+        $cost = apply_filters('BH_Subsk_cost_step', $cost);
         return $cost;
     }
 
@@ -486,7 +486,7 @@ class WP_Subsk extends PluginK
         $min = self::get_cost_min();
         $max = self::get_cost_max();
         $step = self::get_cost_step();
-        return "<input type='number' name='wp_subsk_cost' id='wp_subsk_cost' value='$cost' min='$min' max='$max' step='$step' />";
+        return "<input type='number' name='BH_Subsk_cost' id='BH_Subsk_cost' value='$cost' min='$min' max='$max' step='$step' />";
     }
 
     public static function create_subs_type()
@@ -514,8 +514,8 @@ class WP_Subsk extends PluginK
 
     public static function message_error($tag_msg)
     {
-        $tag = apply_filters('wp_subsk_message_tag', $tag_msg);
-        return apply_filters('wp_subsk_message_error', self::$messages[$tag]);
+        $tag = apply_filters('BH_Subsk_message_tag', $tag_msg);
+        return apply_filters('BH_Subsk_message_error', self::$messages[$tag]);
     }
 
     public static function filter_content($content)
@@ -529,8 +529,8 @@ class WP_Subsk extends PluginK
 
         if (in_array('subscriber', $user->roles)) {
             //tipo de suscripcion
-            $type_subs = get_user_meta($user->data->ID, 'wp_subsk_type_subs');
-            $timeleft = WP_Subsk::get_time_left($user->data->ID);
+            $type_subs = get_user_meta($user->data->ID, 'BH_Subsk_type_subs');
+            $timeleft = BH_Subsk::get_time_left($user->data->ID);
             //si posee un tipo de suscripcion
             if ((count($type_subs) > 0) && ($timeleft > 0)) {
                 $type_subs = $type_subs[0];
@@ -546,12 +546,12 @@ class WP_Subsk extends PluginK
                                 'p' => $post_id
                             ]);
                         }
-                        $id_unique = self::get_var_meta('wp_subsk_id_unique');
-                        $posts = json_decode(get_option('wp_subsk_selected_post_enable_' . $id_unique), true) ?? [];
+                        $id_unique = self::get_var_meta('BH_Subsk_id_unique');
+                        $posts = json_decode(get_option('BH_Subsk_selected_post_enable_' . $id_unique), true) ?? [];
                         $post_type = get_post_type();
                         if (in_array($post_type, $posts)) {
-                            $posts_specify = json_decode(get_option('wp_subsk_selected_post_specify_' . $id_unique), true) ?? [];
-                            $type_control = self::get_var_meta('wp_subsk_type_control') ?? "1";
+                            $posts_specify = json_decode(get_option('BH_Subsk_selected_post_specify_' . $id_unique), true) ?? [];
+                            $type_control = self::get_var_meta('BH_Subsk_type_control') ?? "1";
                             $ID = $post->post ? $post->post->ID : -1;
                             foreach ($posts_specify as $post) {
                                 if (($post['ID'] == $ID) && ($post['post_type'] == $post_type) && $type_control) {
@@ -559,8 +559,8 @@ class WP_Subsk extends PluginK
                                 }
                             }
                         } else {
-                            $posts_specify = json_decode(get_option('wp_subsk_selected_post_specify_' . $id_unique), true) ?? [];
-                            $type_control = self::get_var_meta('wp_subsk_type_control') ?? "1";
+                            $posts_specify = json_decode(get_option('BH_Subsk_selected_post_specify_' . $id_unique), true) ?? [];
+                            $type_control = self::get_var_meta('BH_Subsk_type_control') ?? "1";
                             $ID = $post->post->ID;
                             foreach ($posts_specify as $post) {
                                 if (($post['ID'] == $ID) && ($post['post_type'] == $post_type) && $type_control) {
@@ -602,10 +602,10 @@ class WP_Subsk extends PluginK
             $post_subs = $post_subs_query->posts;
             //mapping of subscription
             foreach( $post_subs as $sub ){
-                $id_unique = self::get_var_meta('wp_subsk_id_unique',$sub->ID);
-                $type_control = self::get_var_meta('wp_subsk_type_control',$sub->ID) ?? "1";
-                $bySpecify = json_decode( get_option('wp_subsk_selected_post_specify_' . $id_unique) );
-                $byType = json_decode( get_option('wp_subsk_selected_post_enable_' . $id_unique) );
+                $id_unique = self::get_var_meta('BH_Subsk_id_unique',$sub->ID);
+                $type_control = self::get_var_meta('BH_Subsk_type_control',$sub->ID) ?? "1";
+                $bySpecify = json_decode( get_option('BH_Subsk_selected_post_specify_' . $id_unique) );
+                $byType = json_decode( get_option('BH_Subsk_selected_post_enable_' . $id_unique) );
                 
                 if( $bySpecify ){
                     foreach( $bySpecify as $specify ){
@@ -655,7 +655,7 @@ class WP_Subsk extends PluginK
             }
             $subs = self::get_all_sub();
             foreach ($subs as $sub) {
-                $id = self::get_var_meta('wp_subsk_id_unique', $sub->ID);
+                $id = self::get_var_meta('BH_Subsk_id_unique', $sub->ID);
                 if ($id == $id_unique) {
                     $regenerate = true;
                 }
@@ -666,33 +666,33 @@ class WP_Subsk extends PluginK
 
     public static function set_meta($post_id, $post = null)
     {
-        if (isset($_POST['wp_subsk_btn_select_post_enable'])) {
-            $id_unique = $_POST['wp_subsk_id_unique'];
+        if (isset($_POST['BH_Subsk_btn_select_post_enable'])) {
+            $id_unique = $_POST['BH_Subsk_id_unique'];
             if ($id_unique == '') {
                 $id_unique = self::generate_id();
             }
-            $new_content = $_POST['wp_subsk_content_select_post_enable'];
-            $posts = json_decode(get_option('wp_subsk_selected_post_enable_' . $id_unique), true) ?? [];
+            $new_content = $_POST['BH_Subsk_content_select_post_enable'];
+            $posts = json_decode(get_option('BH_Subsk_selected_post_enable_' . $id_unique), true) ?? [];
             $posts[] = $new_content;
-            update_option('wp_subsk_selected_post_enable_' . $id_unique, json_encode($posts));
-        } elseif (isset($_POST['wp_subsk_btn_select_post_specify'])) {
-            $id_unique = $_POST['wp_subsk_id_unique'];
+            update_option('BH_Subsk_selected_post_enable_' . $id_unique, json_encode($posts));
+        } elseif (isset($_POST['BH_Subsk_btn_select_post_specify'])) {
+            $id_unique = $_POST['BH_Subsk_id_unique'];
             if ($id_unique == '') {
                 $id_unique = self::generate_id();
             }
-            $id_post = $_POST['wp_subsk_content_select_post_specify'];
-            $post_type = $_POST['wp_subsk_content_select_post_type'];
-            $posts = json_decode(get_option('wp_subsk_selected_post_specify_' . $id_unique), true) ?? [];
+            $id_post = $_POST['BH_Subsk_content_select_post_specify'];
+            $post_type = $_POST['BH_Subsk_content_select_post_type'];
+            $posts = json_decode(get_option('BH_Subsk_selected_post_specify_' . $id_unique), true) ?? [];
             $posts[] = [
                 'ID' => $id_post,
                 'post_type' => $post_type
             ];
-            update_option('wp_subsk_selected_post_specify_' . $id_unique, json_encode($posts));
-        } elseif (isset($_POST['wp_subsk_create_product'])) {
+            update_option('BH_Subsk_selected_post_specify_' . $id_unique, json_encode($posts));
+        } elseif (isset($_POST['BH_Subsk_create_product'])) {
             include 'admin/create_product.php';
         } else {
             self::if_delete_any_post();
-            self::set_var_meta($post_id, WP_Subsk::$var_metas);
+            self::set_var_meta($post_id, BH_Subsk::$var_metas);
         }
     }
 
@@ -700,37 +700,37 @@ class WP_Subsk extends PluginK
 
     public static function if_delete_any_post()
     {
-        $id_unique = isset($_POST['wp_subsk_id_unique']) ? $_POST['wp_subsk_id_unique'] : null;
+        $id_unique = isset($_POST['BH_Subsk_id_unique']) ? $_POST['BH_Subsk_id_unique'] : null;
         if (!$id_unique) {
             return;
         }
         $is_delete = false;
-        $posts = json_decode(get_option('wp_subsk_selected_post_enable_' . $id_unique), true) ?? [];
+        $posts = json_decode(get_option('BH_Subsk_selected_post_enable_' . $id_unique), true) ?? [];
         $posts_filtered = [];
         foreach ($posts as $post) {
-            if (!isset($_POST['wp_subsk_delete_type_' . $post])) {
+            if (!isset($_POST['BH_Subsk_delete_type_' . $post])) {
                 $posts_filtered[] = $post;
             } else {
                 $is_delete = true;
             }
         }
         if ($is_delete) {
-            update_option('wp_subsk_selected_post_enable_' . $id_unique, json_encode($posts_filtered));
+            update_option('BH_Subsk_selected_post_enable_' . $id_unique, json_encode($posts_filtered));
         }
 
         $is_delete = false;
-        $posts_specify = json_decode(get_option('wp_subsk_selected_post_specify_' . $id_unique), true) ?? [];
+        $posts_specify = json_decode(get_option('BH_Subsk_selected_post_specify_' . $id_unique), true) ?? [];
         $count = count($posts_specify);
         $posts_filtered = [];
         for ($i = 0; $i < $count; $i++) {
-            if (!isset($_POST['wp_subsk_delete_specify_post_' . $i])) {
+            if (!isset($_POST['BH_Subsk_delete_specify_post_' . $i])) {
                 $posts_filtered[] = $posts_specify[$i];
             } else {
                 $is_delete = true;
             }
         }
         if ($is_delete) {
-            update_option('wp_subsk_selected_post_specify_' . $id_unique, json_encode($posts_filtered));
+            update_option('BH_Subsk_selected_post_specify_' . $id_unique, json_encode($posts_filtered));
         }
     }
 
@@ -783,7 +783,7 @@ class WP_Subsk extends PluginK
 
     public static function get_field_subscriber()
     {
-        return apply_filters('wp_subsk_field_suscriber_showed', [
+        return apply_filters('BH_Subsk_field_suscriber_showed', [
             [
                 "name" => "index",
                 "attrs" => [

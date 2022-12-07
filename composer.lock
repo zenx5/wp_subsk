@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3d988d1e1ef59d0c347ce296989f17ec",
+    "content-hash": "2f3c3dc1139cc47ded1d645b20157e9d",
     "packages": [
         {
             "name": "cron/cron",

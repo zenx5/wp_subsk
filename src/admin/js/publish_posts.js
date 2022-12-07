@@ -2,12 +2,12 @@ console.log('publish_posts')
 (function($){
     $(document).ready(function(){
         console.log("READY!!")
-        $('#wp_subsk_content_select_post_type').change(function(ev){
+        $('#BH_Subsk_content_select_post_type').change(function(ev){
             const post_type = ev.target.value;
             console.log(post_type)
             $.ajax({
                 type: 'post',
-                url: wp_subsk_ajax.url,
+                url: BH_Subsk_ajax.url,
                 data: {
                     action: 'get_publish_posts',
                     post_type: post_type

@@ -3,10 +3,10 @@
     
     $woo = class_exists('WooCommerce');
     $create = false;
-    if (isset($_POST['wp_subsk_create_product'])) {
-        WP_Subsk::set_var_meta(get_the_ID(), ['wp_subsk_create_product'], ['1']);
+    if (isset($_POST['BH_Subsk_create_product'])) {
+        BH_Subsk::set_var_meta(get_the_ID(), ['BH_Subsk_create_product'], ['1']);
     }
-    $create_product = WP_Subsk::get_var_meta('wp_subsk_create_product');
+    $create_product = BH_Subsk::get_var_meta('BH_Subsk_create_product');
     if (!$create_product) {
         $create_product = "Crear Producto";
         $products = query_posts( [
@@ -20,16 +20,16 @@
 
     }
 
-    do_action('wp_subsk_cost_before');
+    do_action('BH_Subsk_cost_before');
 
     
     ?>
- <div class="wp_subsk_cost_container" id="wp_subsk_cost_container">
+ <div class="BH_Subsk_cost_container" id="BH_Subsk_cost_container">
      <table style="width:100%;">
          <tr style="width: 100%;">
              <td style="width:auto">
-                 <?= WP_Subsk::get_cost_html() ?>
-                 <span name="wp_subsk_currency" id="wp_subsk_currency"><?= WP_Subsk::get_currency() ?></span>
+                 <?= BH_Subsk::get_cost_html() ?>
+                 <span name="BH_Subsk_currency" id="BH_Subsk_currency"><?= BH_Subsk::get_currency() ?></span>
              </td>
              <td style="width:20%;">
                  <?php if (!$woo) : ?>
@@ -37,7 +37,7 @@
                      <small>Requiere woocommerce</small>
                  <?php else : ?>
                     <?php if(!$create): ?>
-                        <input type="submit" style="width:100%;padding:5px;" name="wp_subsk_create_product" value="Crear Producto" />
+                        <input type="submit" style="width:100%;padding:5px;" name="BH_Subsk_create_product" value="Crear Producto" />
                     <?php else : ?>
                         <input type="submit" style="width:100%;padding:5px;" disabled value="Crear Producto" />
                     <?php endif; ?>
@@ -46,6 +46,6 @@
          </tr>
 
      </table>
-     <input type="hidden" name="wp_subsk_currency" id="wp_subsk_currency" required value="<?= WP_Subsk::get_var_meta('wp_subsk_currency') ?>" />
+     <input type="hidden" name="BH_Subsk_currency" id="BH_Subsk_currency" required value="<?= BH_Subsk::get_var_meta('BH_Subsk_currency') ?>" />
  </div>
- <?php do_action('wp_subsk_cost_after'); ?>
+ <?php do_action('BH_Subsk_cost_after'); ?>

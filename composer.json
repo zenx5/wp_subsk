@@ -1,5 +1,5 @@
 {
-    "name": "zenx5/wp_subsk",
+    "name": "zenx5/bh_subsk",
     "type": "project",
     "license": "MIT",
     "autoload": {
@@ -7,7 +7,7 @@
             "Zenx5\\WpSubsk\\": "src/"
         },
         "files": [
-            "src/class_wp_subsk.php"
+            "src/class_BH_Subsk.php"
         ]
     },
     "authors": [

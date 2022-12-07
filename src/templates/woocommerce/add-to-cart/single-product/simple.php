@@ -73,11 +73,11 @@ if ($product->is_in_stock()) : ?>
             <?php
             if ($template == 3) :
                 $user_id = wp_get_current_user()->ID;
-                $sub_id = get_user_meta($user_id, 'wp_subsk_type_subs');
+                $sub_id = get_user_meta($user_id, 'BH_Subsk_type_subs');
                 if (count($sub_id) > 0) {
                     $sub_id = $sub_id[0];
                     if ($sub_id != -1) {
-                        $sub = WP_Subsk::get_sub($sub_id);
+                        $sub = BH_Subsk::get_sub($sub_id);
             ?>
                         <small style="display: block; padding:15px 5px; border-radius: 4px; color: red;">
                             <i>Actualmente usted posee la suscripcion <b><?= $sub->post_title ?></b></i>
@@ -90,13 +90,13 @@ if ($product->is_in_stock()) : ?>
                 ?>
 
             <?php endif; ?>
-            <button type="submit" <?= (WP_Subsk::is_sub($product) && WP_Subsk::in_cart()) ? "disabled" : "" ?> name="add-to-cart" value="<?php echo esc_attr($product->get_id()); ?>" class="single_add_to_cart_button button alt">
+            <button type="submit" <?= (BH_Subsk::is_sub($product) && BH_Subsk::in_cart()) ? "disabled" : "" ?> name="add-to-cart" value="<?php echo esc_attr($product->get_id()); ?>" class="single_add_to_cart_button button alt">
                 <?php
                 if ($template == 2) {
                     echo "Suscribirse";
                 } elseif ($template == 3) {
                     if ($sub->post_title == $product->get_name()) {
-                        echo "Renovar Suscripcion <br>( <i>" . WP_Subsk::get_time_left($user_id) . " dias restantes </i>)";
+                        echo "Renovar Suscripcion <br>( <i>" . BH_Subsk::get_time_left($user_id) . " dias restantes </i>)";
                     } else {
                         echo "Cambiar Suscripcion";
                     }

@@ -5,9 +5,9 @@ $sub = self::get_sub($post_id);
 $name              = $sub->post_title;
 $will_manage_stock = true;
 $is_virtual        = true;
-$price             = $_POST['wp_subsk_cost'];
+$price             = $_POST['BH_Subsk_cost'];
 $is_on_sale        = true;
-$sale_price        = $_POST['wp_subsk_cost'];
+$sale_price        = $_POST['BH_Subsk_cost'];
 $product           = new \WC_Product();
 $image_id = 0; // Attachment ID
 //$gallery  = [];
@@ -48,5 +48,5 @@ $product->set_props(array(
     'image_id'           => $image_id,
     //'gallery_image_ids'  => $gallery,
 ));
-unset($_POST['wp_subsk_create_product']);
+unset($_POST['BH_Subsk_create_product']);
 $product->save();

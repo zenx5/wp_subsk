@@ -1,4 +1,4 @@
-# wp_subsk
+# BH_Subsk
 
     Plugin para administración de suscripciones, control de accesos a contenidos
     y a caracteristicas de wordpress
@@ -39,22 +39,22 @@
     Los hooks "before" permiten agregar contenido antes de que se muestre el correspondiente contenido,
     de la misma manera los hooks "after" lo hacen despues
 
-- wp_subsk_content_before
-- wp_subsk_content_after
-- wp_subsk_cost_before
-- wp_subsk_cost_after
-- wp_subsk_period_before
-- wp_subsk_period_after
+- BH_Subsk_content_before
+- BH_Subsk_content_after
+- BH_Subsk_cost_before
+- BH_Subsk_cost_after
+- BH_Subsk_period_before
+- BH_Subsk_period_after
 
 ## Filters:
 
-- wp_subsk_currency
-- wp_subsk_period
-- wp_subsk_period_min
-- wp_subsk_period_max
-- wp_subsk_period_step
-- wp_subsk_period_format
-- wp_subsk_cost
-- wp_subsk_cost_min
-- wp_subsk_cost_max
-- wp_subsk_cost_step
+- BH_Subsk_currency
+- BH_Subsk_period
+- BH_Subsk_period_min
+- BH_Subsk_period_max
+- BH_Subsk_period_step
+- BH_Subsk_period_format
+- BH_Subsk_cost
+- BH_Subsk_cost_min
+- BH_Subsk_cost_max
+- BH_Subsk_cost_step
